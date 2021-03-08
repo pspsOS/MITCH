@@ -8,14 +8,21 @@
 
 #include "gps_acquisition.h"
 #include "generic_interface.h"
+#include "interface_structs.h"
+#include "system_functions.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 /* Local variable declarations */
 char gpsNmea[MAX_NMEA]; // Buffer that holds GPS String
 char unsplitGpsNmea[MAX_NMEA]; // Buffer that holds GPS String and is not split
 bool gpsNominal;        // Indicates whether the GPS is nominal
 
 
-ui8 _nmeaAddrStart;
-ui8 _nmeaAddrEnd;
+uint8_t _nmeaAddrStart;
+uint8_t _nmeaAddrEnd;
 
 // File pointers for Debugging
 #ifdef HARDWARE_EMULATOR
@@ -24,7 +31,7 @@ ui8 _nmeaAddrEnd;
 
 void gpsSetup_A() {
 	gpsNominal = true;
-		#ifndef HARDWARE_EMULATOR
+		#ifdef HARDWARE_EMULATOR
 			_gpsFile = setupSensorFile_DS(GPS, &gpsNominal);
 		#else
 			// TODO: Implement gpsSetup
@@ -44,7 +51,7 @@ void gpsSetup_A() {
  * @author Jack Wiley
  * @date 02/01/2021
  */
-void gpsRead_A() {
+void gpsRead_A(gpsData_t* g_gpsData) {
 #ifdef BYPASS_GPS
 	printf("GPS Read \r\n");
 	return;
@@ -63,9 +70,9 @@ void gpsRead_A() {
 	_splitNmea();
 
 	//recieving no new data
-	if((!strcmp((char*)g_gpsData.nmeaGGA, unsplitGpsNmea) || !strcmp((char*)g_gpsData.nmeaRMC, unsplitGpsNmea)))
+	if((!strcmp((char*)g_gpsData->nmeaGGA, unsplitGpsNmea) || !strcmp((char*)g_gpsData->nmeaRMC, unsplitGpsNmea)))
 	{
-		g_gpsData.hasUpdate = false;
+		g_gpsData->hasUpdate = false;
 		// leave function
 		return;
 	}
@@ -73,14 +80,14 @@ void gpsRead_A() {
 
 
 	//lock structure
-	while(g_gpsData.lock)
+	while(g_gpsData->lock)
 		retryTakeDelay(DEFAULT_TAKE_DELAY);
-	g_gpsData.lock = true;
+	g_gpsData->lock = true;
 
 
 
 	// first time loading in
-	if((!strcmp((char*)g_gpsData.nmeaGGA, "") && !strcmp((char*)g_gpsData.nmeaRMC, "")))
+	if((!strcmp((char*)g_gpsData->nmeaGGA, "") && !strcmp((char*)g_gpsData->nmeaRMC, "")))
 	{
 		_addNmeaData();
 
@@ -94,7 +101,7 @@ void gpsRead_A() {
 	}
 
 	//if no unsent data
-	if((strcmp((char*)g_gpsData.nmeaGGA, "") && strcmp((char*)g_gpsData.nmeaRMC, "")) && !firstFlag)
+	if((strcmp((char*)g_gpsData->nmeaGGA, "") && strcmp((char*)g_gpsData->nmeaRMC, "")) && !firstFlag)
 	{
 
 
@@ -105,9 +112,9 @@ void gpsRead_A() {
 		_splitNmea();
 
 		//recieving no new data
-		if((!strcmp((char*)g_gpsData.nmeaGGA, unsplitGpsNmea) || !strcmp((char*)g_gpsData.nmeaRMC, unsplitGpsNmea)))
+		if((!strcmp((char*)g_gpsData->nmeaGGA, unsplitGpsNmea) || !strcmp((char*)g_gpsData->nmeaRMC, unsplitGpsNmea)))
 		{
-			g_gpsData.hasUpdate = false;
+			g_gpsData->hasUpdate = false;
 			// leave function
 			return;
 		}
@@ -116,17 +123,17 @@ void gpsRead_A() {
 		_findNmeaAddr(1);
 		time = atoi(&gpsNmea[_nmeaAddrStart]);
 
-		//printf("%d\n",g_gpsData.utc);
-		if(time == g_gpsData.utc )
+		//printf("%d\n",g_gpsData->utc);
+		if(time == g_gpsData->utc )
 		{
 			//printf("here\n");
 			// if time stamps are equal
 			_addNmeaData();
 
-			g_gpsData.hasUpdate = true;
+			g_gpsData->hasUpdate = true;
 
 			//unlocking
-			g_gpsData.lock = false;
+			g_gpsData->lock = false;
 
 			__printGpsData();
 
@@ -137,41 +144,41 @@ void gpsRead_A() {
 			// time stamps are different
 
 			// setting unreciveced data to zero
-			if((strcmp((char*)g_gpsData.nmeaGGA, "")))
+			if((strcmp((char*)g_gpsData->nmeaGGA, "")))
 			{
 				//never recieved rmc
-				//strncpy((char*)g_gpsData.nmeaRMC, "", 0);
-				_clearNmea((char*)&g_gpsData.nmeaRMC);
-				g_gpsData.speed = 0.0;
+				//strncpy((char*)g_gpsData->nmeaRMC, "", 0);
+				_clearNmea((char*)&g_gpsData->nmeaRMC);
+				g_gpsData->speed = 0.0;
 
 			}
 			else
 			{
 				//never recieved gga
-				//strncpy((char*)g_gpsData.nmeaGGA, "", 0);
-				_clearNmea((char*)&g_gpsData.nmeaGGA);
-				g_gpsData.alt = 0.0;
-				g_gpsData.fix = 0;
+				//strncpy((char*)g_gpsData->nmeaGGA, "", 0);
+				_clearNmea((char*)&g_gpsData->nmeaGGA);
+				g_gpsData->alt = 0.0;
+				g_gpsData->fix = 0;
 
 			}
 
 
 			//unlocking
-			g_gpsData.hasUpdate = true;
-			g_gpsData.lock = false;
+			g_gpsData->hasUpdate = true;
+			g_gpsData->lock = false;
 			__printGpsData();
 			do
 			{
 					#ifndef NDEBUG
-						g_gpsData.hasUpdate = false; // Breaks infinite loop if run in testbed
+						g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
 					#endif
 				retryTakeDelay(ACQUISITION_TASK_DELAY2 / 4);
-			} while(g_gpsData.hasUpdate || g_gpsData.lock);
+			} while(g_gpsData->hasUpdate || g_gpsData->lock);
 
 			//relock
-			while(g_gpsData.lock)
+			while(g_gpsData->lock)
 				retryTakeDelay(DEFAULT_TAKE_DELAY);
-			g_gpsData.lock = true;
+			g_gpsData->lock = true;
 
 			_addNmeaData();
 
@@ -181,24 +188,24 @@ void gpsRead_A() {
 			{
 
 				//never recieved gga
-				//strncpy((char*)g_gpsData.nmeaGGA, "", 0);
-				_clearNmea((char*)&g_gpsData.nmeaGGA);
-				g_gpsData.alt = 0.0;
-				g_gpsData.fix = 0;
+				//strncpy((char*)g_gpsData->nmeaGGA, "", 0);
+				_clearNmea((char*)&g_gpsData->nmeaGGA);
+				g_gpsData->alt = 0.0;
+				g_gpsData->fix = 0;
 
 			}
 			else
 			{
 				//never recieved rmc
-				//strncpy((char*)g_gpsData.nmeaRMC, "", 0);
-				_clearNmea((char*)&g_gpsData.nmeaRMC);
-				g_gpsData.speed = 0.0;
+				//strncpy((char*)g_gpsData->nmeaRMC, "", 0);
+				_clearNmea((char*)&g_gpsData->nmeaRMC);
+				g_gpsData->speed = 0.0;
 
 			}
 
 			//unlock
-			g_gpsData.hasUpdate = false;
-			g_gpsData.lock = false;
+			g_gpsData->hasUpdate = false;
+			g_gpsData->lock = false;
 
 
 		}
@@ -209,15 +216,15 @@ void gpsRead_A() {
 		_findNmeaAddr(1);
 		time = atoi(&gpsNmea[_nmeaAddrStart]);
 
-		if(time == g_gpsData.utc ) {
+		if(time == g_gpsData->utc ) {
 
 			// if time stamps are equal
 			_addNmeaData();
 
-			g_gpsData.hasUpdate = true;
+			g_gpsData->hasUpdate = true;
 
 			//unlocking
-			g_gpsData.lock = false;
+			g_gpsData->lock = false;
 			__printGpsData();
 
 
@@ -226,21 +233,21 @@ void gpsRead_A() {
 			//timestamps are different
 
 			//unlocking
-				g_gpsData.hasUpdate = true; // This sets hasUpdate = true
-				g_gpsData.lock = false;
+				g_gpsData->hasUpdate = true; // This sets hasUpdate = true
+				g_gpsData->lock = false;
 				__printGpsData();
 				do {
 					retryTakeDelay(ACQUISITION_TASK_DELAY2);
 					#ifndef NDEBUG
-						g_gpsData.hasUpdate = false; // Breaks infinite loop if run in testbed
+						g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
 					#endif
-				} while(g_gpsData.hasUpdate || g_gpsData.lock); // Only breaks if hasUpdate = false or locked
+				} while(g_gpsData->hasUpdate || g_gpsData->lock); // Only breaks if hasUpdate = false or locked
 
 
 				//relock
-				while(g_gpsData.lock)
+				while(g_gpsData->lock)
 						retryTakeDelay(DEFAULT_TAKE_DELAY);
-				g_gpsData.lock = true;
+				g_gpsData->lock = true;
 
 				_addNmeaData();
 
@@ -250,25 +257,25 @@ void gpsRead_A() {
 				{
 
 					//never recieved rmc
-					//strncpy((char*)g_gpsData.nmeaRMC, "", 0);
-					_clearNmea((char*)&g_gpsData.nmeaRMC);
-					g_gpsData.speed = 0.0;
+					//strncpy((char*)g_gpsData->nmeaRMC, "", 0);
+					_clearNmea((char*)&g_gpsData->nmeaRMC);
+					g_gpsData->speed = 0.0;
 
 				}
 				else
 				{
 
 					//never recieved gga
-					//strncpy((char*)g_gpsData.nmeaGGA, "", 0);
-					_clearNmea((char*)&g_gpsData.nmeaGGA);
-					g_gpsData.alt = 0.0;
-					g_gpsData.fix = 0;
+					//strncpy((char*)g_gpsData->nmeaGGA, "", 0);
+					_clearNmea((char*)&g_gpsData->nmeaGGA);
+					g_gpsData->alt = 0.0;
+					g_gpsData->fix = 0;
 
 				}
 
 				//unlock
-				g_gpsData.hasUpdate = false;
-				g_gpsData.lock = false;
+				g_gpsData->hasUpdate = false;
+				g_gpsData->lock = false;
 
 		}
 	}
@@ -286,7 +293,7 @@ void gpsRead_A() {
  * @date 1/25/2020
  */
 
-void _addNmeaData()
+void _addNmeaData(gpsData_t* g_gpsData)
 {
 	// local variables
 	int time; //holds value until copied into struct
@@ -298,47 +305,47 @@ void _addNmeaData()
 			{
 		//Type GGA
 		//adds GCA to struct
-		strncpy((char*)g_gpsData.nmeaGGA, unsplitGpsNmea, strlen(unsplitGpsNmea));
+		strncpy((char*)g_gpsData->nmeaGGA, unsplitGpsNmea, strlen(unsplitGpsNmea));
 
 		//adds time to stuct
 		time = 0;
 		_findNmeaAddr(1);
 		time = atoi(&gpsNmea[_nmeaAddrStart]);
 
-		g_gpsData.utc = time;
-		g_gpsData.timeStamp = getTimeStamp();
+		g_gpsData->utc = time;
+		g_gpsData->timeStamp = getTimeStamp();
 
 
 		//adds altitude to struct
 		altitude = 0;
 		_findNmeaAddr(9);
 		altitude = atof(&gpsNmea[_nmeaAddrStart]);
-		g_gpsData.alt = altitude;
+		g_gpsData->alt = altitude;
 
 		//adds fix to struct
 		fix = 0;
 		_findNmeaAddr(6);
 		fix = atof(&gpsNmea[_nmeaAddrStart]);
-		g_gpsData.fix = fix;
+		g_gpsData->fix = fix;
 
 	}
 	else
 	{
 		//Type RMC
-		strncpy((char*)g_gpsData.nmeaRMC, unsplitGpsNmea, strlen(unsplitGpsNmea));
+		strncpy((char*)g_gpsData->nmeaRMC, unsplitGpsNmea, strlen(unsplitGpsNmea));
 
 		//adds time to stuct
 		time = 0;
 		_findNmeaAddr(1);
 		time = atoi(&gpsNmea[_nmeaAddrStart]);
-		g_gpsData.utc = time;
-		g_gpsData.timeStamp = getTimeStamp();
+		g_gpsData->utc = time;
+		g_gpsData->timeStamp = getTimeStamp();
 
 		//adds speed to struct
 		speed = 0;
 		_findNmeaAddr(7);
 		speed = atof(&gpsNmea[_nmeaAddrStart]);
-		g_gpsData.speed = speed;
+		g_gpsData->speed = speed;
 
 
 
@@ -385,7 +392,7 @@ int _getNmeaType()
  */
 void _loadGpsData()
 {
-#ifndef NDEBUG
+#ifdef HARDWARE_EMULATOR
 		if(!simulateGps) {
 			if(notifyWhenReadAborted)
 				printf("GPS read aborted.\n");
@@ -466,15 +473,15 @@ void _clearNmea(char *nmea) {
  * @author Jack Wiley
  * @date 1/26/2020
  */
-void __printGpsData()
+void __printGpsData(gpsData_t* g_gpsData)
 {
 
-	printf("Time: %d\n",g_gpsData.utc);
-	printf("GGA: %s\n",g_gpsData.nmeaGGA);
-	printf("RMC: %s\n",g_gpsData.nmeaRMC);
-	printf("Fix: %d\n",g_gpsData.fix);
-	//printf("Alt: %f\n",g_gpsData.alt)	;
-	//printf("Speed: %f\n\n",g_gpsData.speed);
+	printf("Time: %d\n",g_gpsData->utc);
+	printf("GGA: %s\n",g_gpsData->nmeaGGA);
+	printf("RMC: %s\n",g_gpsData->nmeaRMC);
+	printf("Fix: %d\n",g_gpsData->fix);
+	//printf("Alt: %f\n",g_gpsData->alt)	;
+	//printf("Speed: %f\n\n",g_gpsData->speed);
 }
 
 /**
