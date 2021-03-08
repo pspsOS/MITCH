@@ -1,0 +1,33 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+ELF_SRCS := 
+OBJ_SRCS := 
+S_SRCS := 
+C_SRCS := 
+S_UPPER_SRCS := 
+O_SRCS := 
+SIZE_OUTPUT := 
+OBJDUMP_LIST := 
+EXECUTABLES := 
+OBJS := 
+S_DEPS := 
+S_UPPER_DEPS := 
+C_DEPS := 
+OBJCOPY_BIN := 
+
+# Every subdirectory with source files must be described here
+SUBDIRS := \
+Core/Src \
+Core/Startup \
+Core/Task_Functions/Task_Src \
+Drivers/STM32F4xx_HAL_Driver/Src \
+MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src \
+MITCH_Common/Software/Acquisition/Acquisition_Src \
+MITCH_Common/System/System_Src \
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
+Middlewares/Third_Party/FreeRTOS/Source \
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
+Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang \
+
