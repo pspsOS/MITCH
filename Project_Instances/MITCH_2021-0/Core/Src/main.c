@@ -58,6 +58,11 @@ uint32_t ProcessingBuffer[ 128 ];
 osStaticThreadDef_t ProcessingControlBlock;
 /* USER CODE BEGIN PV */
 
+/** Device Initializations **/
+
+
+/** Interface Struct Initializations **/
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

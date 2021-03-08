@@ -92,6 +92,34 @@ void Error_Handler(void);
 #define ALA_ST_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+/** System Flags **/
+
+
+/** Task Rates **/
+// Acquisition Rates Multiplier Settings
+#define GPS_FREQ (1)        //   1 Hz
+#define BMP_MULTIPLIER (10) //  10 Hz
+#define IMU_MULTIPLIER (10) // 100 Hz
+
+// Other Task Rates
+#define PROCESSING_TASK_RATE    (125) // TODO: Determine optimal Processing Task Rate (currently 125 Hz)
+
+// Task Delays are calculated from above rates (DO NOT EDIT)
+#define ACQUISITION_TASK_RATE0  (GPS_FREQ)
+#define ACQUISITION_TASK_RATE1  (GPS_FREQ * BMP_MULTIPLIER)
+#define ACQUISITION_TASK_RATE2  (GPS_FREQ * BMP_MULTIPLIER * IMU_MULTIPLIER)
+#define ACQUISITION_TASK_DELAY0  (1000 / ACQUISITION_TASK_RATE0 / portTICK_RATE_MS)
+#define ACQUISITION_TASK_DELAY1  (1000 / ACQUISITION_TASK_RATE1 / portTICK_RATE_MS)
+#define ACQUISITION_TASK_DELAY2  (1000 / ACQUISITION_TASK_RATE2 / portTICK_RATE_MS)
+
+#define PROCESSING_TASK_DELAY    (1000 / PROCESSING_TASK_RATE / portTICK_RATE_MS)
+
+/** Device Definitions **/
+
+
+/** Interface Struct Definitions **/
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
