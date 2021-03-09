@@ -14,40 +14,30 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-//#include "MS5607.h"
-/*(
-#ifdef STM32F4xx_HAL_SPI_H
-	#define _SPI_CONFIGURED
-#endif
-#ifdef _SPI_CONFIGURED
-	extern SPI_HandleTypeDef  hspi1;
-	extern SPI_HandleTypeDef  hspi3;
-#elif !defined(STM32F4xx_HAL_SPI_H)
-	//typedef void SPI_HandleTypeDef;
-#endif
-
-#ifndef __STM32F4xx_HAL_DEF
 
 
-#endif
-
-*/
 /** Checks/Sets NO_HAL_DEF Flag **/
 #if !defined(__STM32F4xx_HAL_DEF)
-	typedef void HAL_StatusTypeDef;
+	typedef enum {
+	  HAL_OK       = 0x00U,
+	  HAL_ERROR    = 0x01U,
+	  HAL_BUSY     = 0x02U,
+	  HAL_TIMEOUT  = 0x03U
+	} HAL_StatusTypeDef;
 	#define __NO_HAL_DEF
 #endif
 
-/** Checks/Sets NO_HAL_SPI Flag **/
-#if !defined (STM32F4xx_HAL_SPI_H)
-	typedef void SPI_HandleTypeDef;
-	#define __NO_HAL_SPI
-#endif
 
 /** Checks/Sets NO_STM_DEV Flag **/
 #if !defined(__STM32F411xE_H)
 	typedef void GPIO_TypeDef;
 	#define __NO_STM_DEV
+#endif
+
+/** Checks/Sets NO_HAL_SPI Flag **/
+#if !defined (STM32F4xx_HAL_SPI_H) || defined(__NO_HAL_DEF) || defined(__NO_STM_DEV)
+	typedef void SPI_HandleTypeDef;
+	#define __NO_HAL_SPI
 #endif
 /* Enum */
 
@@ -160,7 +150,11 @@ typedef struct genericBMP {
 
 } genericBMP_t;
 
-void bmpInit(genericBMP_t* bmp);
-void bmpRead(genericBMP_t* bmp);
+
+HAL_StatusTypeDef sendSPI(uint8_t * cmd, int len, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
+HAL_StatusTypeDef receiveSPI(uint8_t * cmd, int cmdLen, uint8_t * data, int dataLen, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
+void handleSPI(HAL_StatusTypeDef state, DeviceType_t device);
+
+uint8_t bmpRead(genericBMP_t* bmp);
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */
