@@ -26,4 +26,12 @@ typedef struct gpsData {
 } gpsData_t;
 
 
+typedef struct bmpData {
+	uint32_t timeStamp;
+	int32_t pressure;     // MIN: 1000, MAX: 120000, VALUE: 110002 = 1100.02 mbar
+	int32_t temperature;  // MIN:-4000, MAX: 8500,   VALUE: 2000 = 20.00 degC
+	bool hasUpdate;
+	bool lock;
+} bmpData_t;
+
 #endif /* SYSTEM_SYSTEM_INC_INTERFACE_STRUCTS_H_ */
