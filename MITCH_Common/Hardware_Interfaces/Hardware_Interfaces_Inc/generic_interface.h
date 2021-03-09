@@ -8,8 +8,9 @@
 #ifndef HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_
 #define HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_
 
-#include "hardware_interfaces.h"
-
+#include "interface_structs.h"
+#include <stdint.h>
+#include <stdbool.h>
 
 /* Enum */
 
