@@ -7,9 +7,14 @@
 
 
 #include "gps_acquisition.h"
+#include "generic_interface.h"
+#include "interface_structs.h"
+#include "system_functions.h"
+#include "main.h"
 
-
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Local variable declarations */
 char gpsNmea[MAX_NMEA]; // Buffer that holds GPS String
