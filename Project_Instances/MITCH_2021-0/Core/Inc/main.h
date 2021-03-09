@@ -114,6 +114,8 @@ void Error_Handler(void);
 
 #define PROCESSING_TASK_DELAY    (1000 / PROCESSING_TASK_RATE / portTICK_RATE_MS)
 
+#define DEFAULT_TAKE_DELAY (50)
+
 /** Device Definitions **/
 
 

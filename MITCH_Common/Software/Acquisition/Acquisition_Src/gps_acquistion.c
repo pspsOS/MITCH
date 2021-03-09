@@ -10,6 +10,7 @@
 #include "generic_interface.h"
 #include "interface_structs.h"
 #include "system_functions.h"
+#include "main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
