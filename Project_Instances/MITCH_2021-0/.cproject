@@ -53,6 +53,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/Software/Acquisition/Acquisition_Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/System/System_Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/Hardware_Interfaces}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/Software}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MITCH_2021-0/MITCH_Common/Software/Acquisition}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1964074142" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

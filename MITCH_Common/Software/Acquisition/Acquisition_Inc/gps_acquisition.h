@@ -8,6 +8,7 @@
 #ifndef SOFTWARE_ACQUISITION_ACQUISITION_INC_GPS_ACQUISITION_H_
 #define SOFTWARE_ACQUISITION_ACQUISITION_INC_GPS_ACQUISITION_H_
 
+#include "acquisition.h"
 
 void gpsSetup_A();
 void gpsRead_A();
