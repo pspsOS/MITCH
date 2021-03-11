@@ -8,6 +8,8 @@
 #ifndef SYSTEM_SYSTEM_INC_INTERFACE_STRUCTS_H_
 #define SYSTEM_SYSTEM_INC_INTERFACE_STRUCTS_H_
 
+#include "main.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -26,10 +28,11 @@ typedef struct gpsData {
 } gpsData_t;
 
 
-typedef struct bmpData {
+typedef struct {
 	uint32_t timeStamp;
 	int32_t pressure;     // MIN: 1000, MAX: 120000, VALUE: 110002 = 1100.02 mbar
 	int32_t temperature;  // MIN:-4000, MAX: 8500,   VALUE: 2000 = 20.00 degC
+	//HAL_StatusTypeDef state;
 	bool hasUpdate;
 	bool lock;
 } bmpData_t;

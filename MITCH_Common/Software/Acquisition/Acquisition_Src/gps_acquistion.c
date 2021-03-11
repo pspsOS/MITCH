@@ -36,7 +36,7 @@ void gpsSetup_A() {
 			_gpsFile = setupSensorFile_DS(GPS, &gpsNominal);
 		#else
 			// TODO: Implement gpsSetup
-			gpsInit(&gpsNominal);
+			//gpsInit(&gpsNominal);
 			//notify(TASK_UPDATE, GPS);
 		#endif
 }
@@ -402,7 +402,7 @@ void _loadGpsData()
 		fscanf(_gpsFile, "%s", gpsNmea);
 	#else
 		//TODO: Implement gpsRead w/ hardware
-		gpsLoadString(gpsNmea);
+		//gpsLoadString(gpsNmea);
 
 	#endif
 }

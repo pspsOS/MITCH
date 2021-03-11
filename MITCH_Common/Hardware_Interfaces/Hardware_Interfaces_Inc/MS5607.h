@@ -27,6 +27,10 @@
 #define CONV_T_4096 	10
 
 
-genericBMP_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
+genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
+HAL_StatusTypeDef MS5607_read(genericDevice_t* device);
+
+HAL_StatusTypeDef MS5607_send(MS5607_t* bmp, uint8_t* cmd, int cmdlen);
+HAL_StatusTypeDef MS5607_receive(MS5607_t* bmp, uint8_t* cmd, int cmdlen, uint8_t* data, int datalen);
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_MS5607_H_ */
