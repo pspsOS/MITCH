@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "generic_interface.h"
+#include "MS5607.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,9 +60,10 @@ osStaticThreadDef_t ProcessingControlBlock;
 /* USER CODE BEGIN PV */
 
 /** Device Initializations **/
-
+genericDevice_t bmp;
 
 /** Interface Struct Initializations **/
+bmpData_t bmpData = {0};
 
 /* USER CODE END PV */
 
@@ -92,7 +94,8 @@ void StartProcessing(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	/** Device Initializations **/
+	bmp = MS5607_init(&hspi1, CS_BMP_GPIO_Port, CS_BMP_Pin);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

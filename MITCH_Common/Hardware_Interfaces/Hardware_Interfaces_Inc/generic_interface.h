@@ -48,14 +48,40 @@ typedef enum {
 	IMU_MMA1211
 } DeviceType_t;
 
-
+typedef enum {
+	SPI_INTERFACE,
+	UART_INTERFACE,
+	I2C_INTERFACE
+} InterfaceType_t;
 
 /* Struct Definitions */
 
-//Generic
-typedef struct genericIMU genericIMU_t;
-typedef struct genericGPS genericGPS_t;
-typedef struct genericBMP genericBMP_t;
+/** Interfaces **/
+typedef struct SPI SPI_t;
+typedef struct UART UART_t;
+typedef struct I2C I2C_t;
+typedef union Interface Interface_u;
+
+typedef struct SPI {
+#ifndef __NO_HAL_SPI
+	SPI_HandleTypeDef *bus;
+	GPIO_TypeDef *port;
+	uint16_t pin;
+#endif
+} SPI_t;
+
+// TODO: UART Struct
+typedef struct UART {} UART_t;
+// TODO: I2C Struct
+typedef struct I2C {} I2C_t;
+
+typedef union Interface {
+	SPI_t SPI;
+	UART_t UART;
+	I2C_t I2C;
+} Interface_u;
+
+/** Devices **/
 //IMU
 typedef struct ICM20948 ICM20948_t;
 typedef struct MMA1211 MMA1211_t;
@@ -63,6 +89,9 @@ typedef struct MMA1211 MMA1211_t;
 typedef struct MT3339 MT3339_t;
 //BMP
 typedef struct MS5607 MS5607_t;
+//Generic
+typedef struct genericDevice genericDevice_t;
+
 
 
 /* Separate IMU Structs */
@@ -108,11 +137,6 @@ typedef struct MS5607 {
 		int64_t off;			//OFF on datasheet (This is a calculated value)
 		int64_t sens;			//SENS on datasheet (This is a calculated value)
 		int32_t pressure;		//P on datasheet (This is a calculated value)
-	// SPI Interface
-		SPI_HandleTypeDef *bus;
-		GPIO_TypeDef *port;
-		uint16_t pin;
-		HAL_StatusTypeDef state;
 } MS5607_t;
 
 
@@ -126,19 +150,19 @@ typedef union {
 	MS5607_t MS5607;
 } Device_u;
 
-typedef HAL_StatusTypeDef (*read_fun)(Device_u*);
+typedef HAL_StatusTypeDef (*read_fun)(genericDevice_t*);
 
 typedef struct genericDevice {
 	DeviceType_t deviceType;
 	read_fun read;
 	Device_u device;
+	Interface_u interface;
+	HAL_StatusTypeDef state;
 } genericDevice_t;
 
 
-HAL_StatusTypeDef sendSPI(uint8_t * cmd, int len, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
-HAL_StatusTypeDef receiveSPI(uint8_t * cmd, int cmdLen, uint8_t * data, int dataLen, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
-void handleSPI(HAL_StatusTypeDef state, DeviceType_t device);
 
-
+HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen);
+HAL_StatusTypeDef receiveSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */

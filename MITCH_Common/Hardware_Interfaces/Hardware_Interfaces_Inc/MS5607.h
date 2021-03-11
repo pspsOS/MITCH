@@ -28,7 +28,7 @@
 
 
 genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
-HAL_StatusTypeDef MS5607_read(Device_u* device);
+HAL_StatusTypeDef MS5607_read(genericDevice_t* device);
 
 HAL_StatusTypeDef MS5607_send(MS5607_t* bmp, uint8_t* cmd, int cmdlen);
 HAL_StatusTypeDef MS5607_receive(MS5607_t* bmp, uint8_t* cmd, int cmdlen, uint8_t* data, int datalen);
