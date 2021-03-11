@@ -49,6 +49,7 @@ typedef enum {
 } DeviceType_t;
 
 
+
 /* Struct Definitions */
 
 //Generic
@@ -111,50 +112,33 @@ typedef struct MS5607 {
 		SPI_HandleTypeDef *bus;
 		GPIO_TypeDef *port;
 		uint16_t pin;
+		HAL_StatusTypeDef state;
 } MS5607_t;
+
 
 /* Generic Struct Declarations */
 
-//IMU
-typedef struct genericIMU {
-	uint8_t imuType;
-	union {
-		ICM20948_t ICM20948;
-		MMA1211_t MMA1211;
-		//To be filled
-	};
 
-} genericIMU_t;
+typedef union {
+	ICM20948_t ICM20948;
+	MMA1211_t MMA1211;
+	MT3339_t MT3339;
+	MS5607_t MS5607;
+} Device_u;
 
-//GPS
-typedef struct genericGPS {
-	uint8_t gpsType;
-	union {
-		MT3339_t MT3339;
-		//To be filled
-	};
+typedef HAL_StatusTypeDef (*read_fun)(Device_u*);
 
-} genericGPS_t;
-
-void gpsInit(bool *gpsNominal);
-void gpsLoadString(char* gpsNmea);
-
-
-//BMP
-typedef struct genericBMP {
-	DeviceType_t bmpType;
-	union {
-		MS5607_t MS5607;
-		//To be filled
-	};
-
-} genericBMP_t;
+typedef struct genericDevice {
+	DeviceType_t deviceType;
+	read_fun read;
+	Device_u device;
+} genericDevice_t;
 
 
 HAL_StatusTypeDef sendSPI(uint8_t * cmd, int len, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
 HAL_StatusTypeDef receiveSPI(uint8_t * cmd, int cmdLen, uint8_t * data, int dataLen, GPIO_TypeDef * port, uint16_t pin, SPI_HandleTypeDef *bus, DeviceType_t device);
 void handleSPI(HAL_StatusTypeDef state, DeviceType_t device);
 
-uint8_t bmpRead(genericBMP_t* bmp);
+
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */
