@@ -23,8 +23,8 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	MS5607_t* bmp = &(gBMP.device.MS5607);
 	uint8_t dataIn[2]; // Buffer to load data received
 	uint8_t cmd;       // Command sent to device
-	bmp->interface = &(gBMP.interface);
-	bmp->interface->SPI.bus = bus;
+	//bmp->interface = &(gBMP.interface);
+	//bmp->interface->SPI.bus = bus;
 
 
 

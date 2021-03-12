@@ -71,7 +71,9 @@ typedef struct SPI {
 } SPI_t;
 
 // TODO: UART Struct
-typedef struct UART {} UART_t;
+typedef struct UART {
+	UART_HandleTypeDef *huart;
+} UART_t;
 // TODO: I2C Struct
 typedef struct I2C {} I2C_t;
 
