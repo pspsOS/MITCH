@@ -10,25 +10,28 @@
 genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin) {
 	/** Define MS5607 Struct **/
 	MS5607_t _bmp = {0};
-
 	genericDevice_t gBMP = {0};
+
 	gBMP.deviceType = BMP_MS5607;
 	gBMP.read = MS5607_read;
 	gBMP.device.MS5607 = _bmp;
 	gBMP.interface.SPI.bus = bus;
 	gBMP.interface.SPI.port = port;
 	gBMP.interface.SPI.pin = pin;
+	gBMP.interface.SPI.timeout = HAL_MAX_DELAY;
+	//gBMP.interface.SPI.retryDelay = 50;
+	gBMP.hasUpdate = true;
+	gBMP.lock = false;
 
 	/** Define Local Variables **/
 	MS5607_t* bmp = &(gBMP.device.MS5607);
 	uint8_t dataIn[2]; // Buffer to load data received
 	uint8_t cmd;       // Command sent to device
-	//bmp->interface = &(gBMP.interface);
-	//bmp->interface->SPI.bus = bus;
-
 
 
 #ifndef __NO_HAL_SPI
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+
 	//Reset baro after power on
 	cmd = 0x1E;
 	if(sendSPI(&gBMP, &cmd, 1)) return gBMP;
@@ -63,6 +66,7 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	if(receiveSPI(&gBMP, &cmd, 1, dataIn, 2)) return gBMP;
 	bmp->tempsens = (dataIn[0] << 8) | dataIn[1];
 
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
 #endif
 	// Update with all values
 
@@ -74,6 +78,15 @@ HAL_StatusTypeDef MS5607_read(genericDevice_t* device) {
 
 	uint8_t dataIn[2]; // Buffer to load data received
 	uint8_t cmd;       // Command sent to device
+
+	while(device->lock) retryTakeDelay(DEFAULT_TAKE_DELAY);
+	device->lock = true;
+
+#ifndef __NO_HAL_SPI
+
+	SPI_t* SPI = &(device->interface.SPI);
+	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_RESET);
+
 
 	//Get values from sensor
 	cmd = D1_1024; //This value will define conversion time, accuracy, and current draw
@@ -92,6 +105,10 @@ HAL_StatusTypeDef MS5607_read(genericDevice_t* device) {
 	if (receiveSPI(device, &cmd, 1, dataIn, 2)) return device->state;
 	bmp->digitalTemp = (dataIn[0] << 8) | dataIn[1];
 
+	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_SET);
+	//unlockSPI(device);
+#endif
+
 	//Calculate calibrated pressure
 	//T = D2 - TREF = D2 - C5 * 2 ^ 8
 	bmp->deltaT = bmp->digitalTemp - bmp->tref * 256;
@@ -107,18 +124,6 @@ HAL_StatusTypeDef MS5607_read(genericDevice_t* device) {
 	return device->state;
 }
 
-/*
-HAL_StatusTypeDef MS5607_send(MS5607_t* bmp, uint8_t* cmd, int cmdlen) {
-	bmp->state = sendSPI(cmd,cmdlen,bmp->port,bmp->pin,bmp->bus,BMP_MS5607);
-	return bmp->state;
-}
-
-
-HAL_StatusTypeDef MS5607_receive(MS5607_t* bmp, uint8_t* cmd, int cmdlen, uint8_t* data, int datalen) {
-	bmp->state = receiveSPI(cmd,cmdlen,data,datalen,bmp->port,bmp->pin,bmp->bus,BMP_MS5607);
-	return bmp->state;
-}
-*/
 
 
 

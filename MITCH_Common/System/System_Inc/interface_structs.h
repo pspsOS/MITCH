@@ -15,6 +15,12 @@
 
 #define MAX_NMEA (80)
 
+typedef enum {
+	LOCKED,
+	HAS_UPDATE,
+	UNLOCKED
+} Status_t;
+
 typedef struct gpsData {
 	uint32_t timeStamp;
 	char nmeaGGA[MAX_NMEA];
@@ -30,9 +36,9 @@ typedef struct gpsData {
 
 typedef struct {
 	uint32_t timeStamp;
+	HAL_StatusTypeDef state;
 	int32_t pressure;     // MIN: 1000, MAX: 120000, VALUE: 110002 = 1100.02 mbar
 	int32_t temperature;  // MIN:-4000, MAX: 8500,   VALUE: 2000 = 20.00 degC
-	//HAL_StatusTypeDef state;
 	bool hasUpdate;
 	bool lock;
 } bmpData_t;
