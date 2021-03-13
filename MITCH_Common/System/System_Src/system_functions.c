@@ -6,6 +6,7 @@
  */
 
 #include "system_functions.h"
+#include "main.h"
 
 /**
  * @brief Get system timestamp
@@ -35,8 +36,27 @@ uint32_t getTimeStamp(void) {
  * @author Jeff Kaji
  * @date 12/28/2020
  */
-void retryTakeDelay(int length) {
+void retryTakeDelay(TickType_t length) {
 #ifndef HARDWARE_EMULATOR
 	vTaskDelay(length);
 #endif
 }
+
+AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts) {
+	AccessRequest_t result = DENIED;
+#ifndef HARDWARE_EMULATOR
+	for(uint8_t i = 0; i < attempts; i++) {
+		if(!(*deviceLock) && !(*structLock)) {
+			*deviceLock = true;
+			*structLock = true;
+			result = APPROVED;
+			break;
+		}
+		vTaskDelay(delay);
+	}
+#else
+	// TODO: Implement access hardware emulation
+#endif
+	return result;
+}
+

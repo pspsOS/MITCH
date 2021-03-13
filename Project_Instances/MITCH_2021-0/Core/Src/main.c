@@ -51,19 +51,19 @@ SPI_HandleTypeDef hspi2;
 
 UART_HandleTypeDef huart2;
 
-osThreadId AcquisitonHandle;
-uint32_t AcquisitonBuffer[ 128 ];
-osStaticThreadDef_t AcquisitonControlBlock;
+osThreadId AcquisitionHandle;
+uint32_t AcquisitionBuffer[ 128 ];
+osStaticThreadDef_t AcquisitionControlBlock;
 osThreadId ProcessingHandle;
 uint32_t ProcessingBuffer[ 128 ];
 osStaticThreadDef_t ProcessingControlBlock;
 /* USER CODE BEGIN PV */
 
-/** Device Initializations **/
-genericDevice_t bmp;
+/** Device Declarations **/
+//volatile genericDevice_t bmp;
 
 /** Interface Struct Initializations **/
-bmpData_t bmpData = {0};
+//volatile bmpData_t bmpData = {0};
 
 /* USER CODE END PV */
 
@@ -94,8 +94,7 @@ void StartProcessing(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	/** Device Initializations **/
-	bmp = MS5607_init(&hspi1, CS_BMP_GPIO_Port, CS_BMP_Pin);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -142,9 +141,9 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of Acquisiton */
-  osThreadStaticDef(Acquisiton, StartAcquisition, osPriorityRealtime, 0, 128, AcquisitonBuffer, &AcquisitonControlBlock);
-  AcquisitonHandle = osThreadCreate(osThread(Acquisiton), NULL);
+  /* definition and creation of Acquisition */
+  osThreadStaticDef(Acquisition, StartAcquisition, osPriorityRealtime, 0, 128, AcquisitionBuffer, &AcquisitionControlBlock);
+  AcquisitionHandle = osThreadCreate(osThread(Acquisition), NULL);
 
   /* definition and creation of Processing */
   osThreadStaticDef(Processing, StartProcessing, osPriorityNormal, 0, 128, ProcessingBuffer, &ProcessingControlBlock);
