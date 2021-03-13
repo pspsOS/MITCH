@@ -6,10 +6,17 @@
  */
 
 #include "bmp_acquisition.h"
-#include "generic_interface.h"
-#include "interface_structs.h"
-#include "system_functions.h"
 
-//void bmpRead(genericDevice_t* device, bmpData_t* data) {
+InterfaceLock_t* _lock = 0;
 
-//}
+void bmpSetInterfaceLock(InterfaceLock_t* lock) {
+	_lock = lock;
+}
+
+HAL_StatusTypeDef bmpRead(genericDevice_t* device) {
+
+	if(_lock) interfaceLock(_lock, DEFAULT_TAKE_DELAY, device->interface.SPI.timeout);
+	device->read(device);
+	if(_lock) interfaceUnlock(_lock, device);
+	return device->state;
+}
