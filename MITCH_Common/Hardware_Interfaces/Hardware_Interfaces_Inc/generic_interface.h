@@ -16,29 +16,6 @@
 
 
 
-/** Checks/Sets NO_HAL_DEF Flag **/
-#if !defined(__STM32F4xx_HAL_DEF)
-	typedef enum {
-	  HAL_OK       = 0x00U,
-	  HAL_ERROR    = 0x01U,
-	  HAL_BUSY     = 0x02U,
-	  HAL_TIMEOUT  = 0x03U
-	} HAL_StatusTypeDef;
-	#define __NO_HAL_DEF
-#endif
-
-
-/** Checks/Sets NO_STM_DEV Flag **/
-#if !defined(__STM32F411xE_H)
-	typedef void GPIO_TypeDef;
-	#define __NO_STM_DEV
-#endif
-
-/** Checks/Sets NO_HAL_SPI Flag **/
-#if !defined (STM32F4xx_HAL_SPI_H) || defined(__NO_HAL_DEF) || defined(__NO_STM_DEV)
-	typedef void SPI_HandleTypeDef;
-	#define __NO_HAL_SPI
-#endif
 /* Enum */
 
 typedef enum {
@@ -57,6 +34,8 @@ typedef enum {
 /* Struct Definitions */
 
 /** Interfaces **/
+typedef bool InterfaceLock_t;
+
 typedef struct SPI SPI_t;
 typedef struct UART UART_t;
 typedef struct I2C I2C_t;
@@ -67,6 +46,8 @@ typedef struct SPI {
 	SPI_HandleTypeDef *bus;
 	GPIO_TypeDef *port;
 	uint16_t pin;
+	uint32_t timeout;
+	//uint32_t retryDelay;
 #endif
 } SPI_t;
 
@@ -80,6 +61,7 @@ typedef union Interface {
 	UART_t UART;
 	I2C_t I2C;
 } Interface_u;
+
 
 /** Devices **/
 //IMU
@@ -158,11 +140,14 @@ typedef struct genericDevice {
 	Device_u device;
 	Interface_u interface;
 	HAL_StatusTypeDef state;
+
+	bool hasUpdate;
+	bool lock;
 } genericDevice_t;
-
-
 
 HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen);
 HAL_StatusTypeDef receiveSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);
+HAL_StatusTypeDef interfaceLock(InterfaceLock_t* lock, uint32_t retryDelay, uint32_t timeout);
+
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */

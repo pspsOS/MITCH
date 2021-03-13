@@ -8,12 +8,21 @@
 #ifndef SYSTEM_SYSTEM_INC_SYSTEM_FUNCTIONS_H_
 #define SYSTEM_SYSTEM_INC_SYSTEM_FUNCTIONS_H_
 
-#ifndef HARDWARE_EMULATOR
-#include "cmsis_os.h"
-#include "stm32f4xx_hal.h"
-#endif
+#include "STM.h"
+#include <stdint.h>
+#include <stdbool.h>
+
+#define GET_BIT(p,n) (((p >> n) & 1) == 1)
+
+
+typedef enum {
+	DENIED,
+	APPROVED,
+} AccessRequest_t;
 
 uint32_t getTimeStamp(void);
-void retryTakeDelay(int length);
+void retryTakeDelay(TickType_t length);
+
+AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts);
 
 #endif /* SYSTEM_SYSTEM_INC_SYSTEM_FUNCTIONS_H_ */

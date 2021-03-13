@@ -117,7 +117,7 @@ void Error_Handler(void);
 #define DEFAULT_TAKE_DELAY (50)
 
 /** Device Definitions **/
-//extern genericDevice_t bmp;
+
 
 /** Interface Struct Definitions **/
 //extern bmpData_t bmpData;
