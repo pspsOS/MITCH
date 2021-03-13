@@ -148,6 +148,6 @@ typedef struct genericDevice {
 HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen);
 HAL_StatusTypeDef receiveSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);
 HAL_StatusTypeDef interfaceLock(InterfaceLock_t* lock, uint32_t retryDelay, uint32_t timeout);
-
+HAL_StatusTypeDef interfaceUnlock(InterfaceLock_t* lock, genericDevice_t* device);
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */
