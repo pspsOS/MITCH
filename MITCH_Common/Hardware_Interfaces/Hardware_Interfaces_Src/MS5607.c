@@ -15,21 +15,25 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	gBMP.deviceType = BMP_MS5607;
 	gBMP.read = MS5607_read;
 	gBMP.device.MS5607 = _bmp;
+#ifndef __NO_HAL_SPI
 	gBMP.interface.SPI.bus = bus;
 	gBMP.interface.SPI.port = port;
 	gBMP.interface.SPI.pin = pin;
 	gBMP.interface.SPI.timeout = HAL_MAX_DELAY;
-	//gBMP.interface.SPI.retryDelay = 50;
+
+#endif
 	gBMP.hasUpdate = true;
 	gBMP.lock = false;
 
-	/** Define Local Variables **/
-	MS5607_t* bmp = &(gBMP.device.MS5607);
-	uint8_t dataIn[2]; // Buffer to load data received
-	uint8_t cmd;       // Command sent to device
 
 
 #ifndef __NO_HAL_SPI
+
+	/** Define Local Variables **/
+	MS5607_t* bmp = &(gBMP.device.MS5607);
+
+	uint8_t dataIn[2]; // Buffer to load data received
+	uint8_t cmd;       // Command sent to device
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
 
 	//Reset baro after power on
@@ -76,14 +80,15 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 HAL_StatusTypeDef MS5607_read(genericDevice_t* device) {
 	MS5607_t* bmp = &(device->device.MS5607);
 
-	uint8_t dataIn[2]; // Buffer to load data received
-	uint8_t cmd;       // Command sent to device
+
 
 	while(device->lock) retryTakeDelay(DEFAULT_TAKE_DELAY);
 	device->lock = true;
 
 #ifndef __NO_HAL_SPI
 
+	uint8_t dataIn[2]; // Buffer to load data received
+	uint8_t cmd;       // Command sent to device
 	SPI_t* SPI = &(device->interface.SPI);
 	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_RESET);
 

@@ -12,11 +12,14 @@
 
 /** Device, InterfaceLock should already be locked. CS Pin is left low.  **/
 HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen) {
+
+
+
+#ifndef __NO_HAL_SPI
 	// Declares convenient SPI pointer
 	SPI_t* SPI = &(device->interface.SPI);
-
 	// SPI Transmission
-#ifndef __NO_HAL_SPI
+
 	// Sends cmd
 	device->state = HAL_SPI_Transmit(SPI->bus, cmd, cmdlen, SPI->timeout);
 #endif
@@ -26,11 +29,11 @@ HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen) {
 }
 
 HAL_StatusTypeDef receiveSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen) {
-	SPI_t *SPI = &(device->interface.SPI);
+
 
 #ifndef __NO_HAL_SPI
 
-
+	SPI_t *SPI = &(device->interface.SPI);
 	device->state = HAL_SPI_Transmit(SPI->bus, cmd, cmdlen, SPI->timeout);
 
 	if(device->state == HAL_OK)
