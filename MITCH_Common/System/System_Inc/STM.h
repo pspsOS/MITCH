@@ -55,4 +55,10 @@
 	#define __NO_HAL_SPI
 #endif
 
+/** Checks/Sets NO_HAL_UART Flag **/
+#if !defined  (__STM32F4xx_HAL_UART_H)
+	typedef void UART_HandleTypeDef;
+	#define __NO_HAL_UART
+#endif
+
 #endif /* SYSTEM_SYSTEM_INC_STM_H_ */

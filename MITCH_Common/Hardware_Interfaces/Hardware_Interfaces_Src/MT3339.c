@@ -3,7 +3,7 @@
 #include "MT3339.h"
 
 genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
-	/** Define MS5607 Struct **/
+	/** Define MT3339 Struct **/
 	MT3339_t _gps = {0};
 
 	genericDevice_t gGPS = {0};
@@ -15,10 +15,8 @@ genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
 	/** Define Local Variables **/
 	MT3339_t* gps = &(gGPS.device.MT3339);
 	uint8_t temporary; // Buffer to load data received
-	//gps->interface = &(gGPS.interface);
-	//gps->interface.UART.huart = huart;
 
-
+#ifndef __NO_HAL_UART
 	HAL_Delay(10);
 	//printf("\nthe size is: %d\n",sizeof(trans));
 	HAL_UART_Receive_IT(huart, &temporary, 1);
@@ -42,7 +40,7 @@ genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
 	//printf(PMTK_Q_RELEASE);
 	//printf("Connection established at 9600 baud...\n");
 	HAL_Delay(1);
-
+#endif
 
 
 	return gGPS;
@@ -66,7 +64,7 @@ HAL_StatusTypeDef MT3339_receive(genericDevice_t* device) {
 	MT3339_t* gps = &(device->device.MT3339);
 	UART_HandleTypeDef* huart = device->interface.UART.huart;
 	uint8_t temporary; // Buffer to load data received
-	if (huart->Instance == USART1)  {
+	if (huart->Instance == device->interface.UART.huart->Instance)  {
 
 			HAL_UART_Receive_IT(huart, &temporary, 1);
 			read(temporary);
