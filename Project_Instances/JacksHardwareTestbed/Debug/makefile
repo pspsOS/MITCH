@@ -12,6 +12,9 @@ RM := rm -rf
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
+-include MITCH_Common/System/System_Src/subdir.mk
+-include MITCH_Common/Software/Acquisition/Acquisition_Src/subdir.mk
+-include MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
