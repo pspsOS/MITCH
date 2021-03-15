@@ -25,6 +25,10 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "retarget.h"
+#include "Adafruit_GPS.h"
+#include "generic_interface.h"
+#include "MT3339.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,7 +53,8 @@ osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[ 128 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 /* USER CODE BEGIN PV */
-
+volatile genericDevice_t gps;
+uint8_t temporary;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,7 +70,16 @@ void StartDefaultTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	MT3339_receive(&gps,&temporary);
+	if ( newNMEAreceived() ) {
+								 if ( !parse(lastNMEA()) ) {
+										return;
+								 }
+							printf("%s\n", lastNMEA());
 
+								}
+	}
 /* USER CODE END 0 */
 
 /**
@@ -100,7 +114,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   RetargetInit(&huart2);
-  printf("hi");
+  printf("Starting\n");
+  gps = MT3339_init(&huart1);
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */

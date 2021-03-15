@@ -60,14 +60,14 @@ HAL_StatusTypeDef MT3339_read(genericDevice_t* device) {
 }
 
 
-HAL_StatusTypeDef MT3339_receive(genericDevice_t* device) {
+HAL_StatusTypeDef MT3339_receive(genericDevice_t* device,uint8_t* buffer) {
 	MT3339_t* gps = &(device->device.MT3339);
 	UART_HandleTypeDef* huart = device->interface.UART.huart;
-	uint8_t buffer; // Buffer to load data received
+	 // Buffer to load data received
 	if (huart->Instance == device->interface.UART.huart->Instance)  {
-
-			HAL_UART_Receive_IT(huart, &buffer, 1);
-			read(buffer);
+			//printf("hi");
+			HAL_UART_Receive_IT(huart,buffer, 1);
+			read(*buffer);
 }
 return device->state;
 }
