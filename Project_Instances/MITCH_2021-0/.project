@@ -30,11 +30,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>MITCH_Common</name>
-			<type>2</type>
-			<location>/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common</location>
-		</link>
-	</linkedResources>
 </projectDescription>
