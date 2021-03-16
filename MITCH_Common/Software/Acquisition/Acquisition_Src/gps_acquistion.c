@@ -33,7 +33,7 @@ uint8_t _nmeaAddrEnd;
 void gpsSetup_A() {
 	gpsNominal = true;
 		#ifdef HARDWARE_EMULATOR
-			_gpsFile = setupSensorFile_DS(GPS, &gpsNominal);
+			//_gpsFile = setupSensorFile_DS(GPS, &gpsNominal);
 		#else
 			// TODO: Implement gpsSetup
 			//gpsInit(&gpsNominal);
@@ -173,7 +173,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 					#ifndef NDEBUG
 						g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
 					#endif
-				retryTakeDelay(ACQUISITION_TASK_DELAY2 / 4);
+				retryTakeDelay(DEFAULT_TAKE_DELAY);
 			} while(g_gpsData->hasUpdate || g_gpsData->lock);
 
 			//relock
@@ -238,7 +238,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 				g_gpsData->lock = false;
 				__printGpsData();
 				do {
-					retryTakeDelay(ACQUISITION_TASK_DELAY2);
+					retryTakeDelay(DEFAULT_TAKE_DELAY);
 					#ifndef NDEBUG
 						g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
 					#endif
@@ -394,6 +394,7 @@ int _getNmeaType()
 void _loadGpsData()
 {
 #ifdef HARDWARE_EMULATOR
+	/*
 		if(!simulateGps) {
 			if(notifyWhenReadAborted)
 				printf("GPS read aborted.\n");
@@ -403,7 +404,7 @@ void _loadGpsData()
 	#else
 		//TODO: Implement gpsRead w/ hardware
 		//gpsLoadString(gpsNmea);
-
+*/
 	#endif
 }
 

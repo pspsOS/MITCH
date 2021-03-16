@@ -15,13 +15,13 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	gBMP.deviceType = BMP_MS5607;
 	gBMP.read = MS5607_read;
 	gBMP.device.MS5607 = _bmp;
-#ifndef __NO_HAL_SPI
+//#ifndef __NO_HAL_SPI
 	gBMP.interface.SPI.bus = bus;
 	gBMP.interface.SPI.port = port;
 	gBMP.interface.SPI.pin = pin;
 	gBMP.interface.SPI.timeout = HAL_MAX_DELAY;
 
-#endif
+//#endif
 	gBMP.hasUpdate = true;
 	gBMP.lock = false;
 

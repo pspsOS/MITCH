@@ -18,7 +18,7 @@ All text above must be included in any redistribution
 ****************************************/
 
 #ifndef AHBPrescTable
-#include "stm32f4xx_hal.h"
+#include "STM.h"
 #include "stdbool.h"
 #endif
 
