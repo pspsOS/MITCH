@@ -8,7 +8,7 @@
  ============================================================================
  */
 
-#include "MyTestbed.h"
+#include <main.h>
 
 int main(void) {
 	return myTestbed();

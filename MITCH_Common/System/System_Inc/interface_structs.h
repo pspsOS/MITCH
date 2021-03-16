@@ -9,6 +9,7 @@
 #define SYSTEM_SYSTEM_INC_INTERFACE_STRUCTS_H_
 
 #include "main.h"
+#include "STM.h"
 
 #include <stdint.h>
 #include <stdbool.h>

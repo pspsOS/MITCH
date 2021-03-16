@@ -42,13 +42,11 @@ typedef struct I2C I2C_t;
 typedef union Interface Interface_u;
 
 typedef struct SPI {
-#ifndef __NO_HAL_SPI
 	SPI_HandleTypeDef *bus;
 	GPIO_TypeDef *port;
 	uint16_t pin;
 	uint32_t timeout;
 	//uint32_t retryDelay;
-#endif
 } SPI_t;
 
 // TODO: UART Struct

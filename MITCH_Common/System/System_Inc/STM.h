@@ -7,10 +7,11 @@
 
 #ifndef SYSTEM_SYSTEM_INC_STM_H_
 #define SYSTEM_SYSTEM_INC_STM_H_
+#include <stdint.h>
 
+#include "main.h"
 #ifndef HARDWARE_EMULATOR
 #include "cmsis_os.h"
-#include "main.h"
 #endif
 
 
@@ -29,11 +30,13 @@
 #endif
 /** Checks/Sets NO_STM_DEV Flag **/
 #if !defined(__STM32F411xE_H)
+	typedef uint32_t TickType_t;
 	typedef void GPIO_TypeDef;
 	typedef enum {
 	  GPIO_PIN_RESET = 0,
 	  GPIO_PIN_SET
 	}GPIO_PinState;
+
 	#define __NO_STM_DEV
 #endif
 
@@ -46,18 +49,27 @@
 	  HAL_TIMEOUT  = 0x03U
 	} HAL_StatusTypeDef;
 	#define HAL_MAX_DELAY      0xFFFFFFFFU
+
 	#define __NO_HAL_DEF
 #endif
 
 /** Checks/Sets NO_HAL_SPI Flag **/
 #if !defined (STM32F4xx_HAL_SPI_H)
-	typedef void SPI_HandleTypeDef;
+	typedef struct {
+		uint8_t bus;
+		uint8_t port;
+		uint8_t pin;
+	} SPI_HandleTypeDef;
+
 	#define __NO_HAL_SPI
 #endif
 
 /** Checks/Sets NO_HAL_UART Flag **/
 #if !defined  (__STM32F4xx_HAL_UART_H)
-	typedef void UART_HandleTypeDef;
+	typedef struct {
+
+	} UART_HandleTypeDef;
+
 	#define __NO_HAL_UART
 #endif
 
