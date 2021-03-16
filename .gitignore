@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 Project_Instances/MITCH_2021-0/Debug/
 Project_Instances/MITCH_2021-0/MITCH_Common
+Project_Instances/JacksHardwareTestbed/Debug/
+Project_Instances/JacksHardwareTestbed/MITCH_Common
