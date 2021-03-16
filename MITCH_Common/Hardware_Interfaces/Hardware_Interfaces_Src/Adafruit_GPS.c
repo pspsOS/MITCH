@@ -206,7 +206,7 @@ char read(uint8_t c) {
   return c;
 }
 
-void Adafruit_GPS (UART_HandleTypeDef huart2)
+void Adafruit_GPS (UART_HandleTypeDef huart)
 {
   common_init();     // Set everything to common state, then...
 	
@@ -231,11 +231,11 @@ void common_init(void) {
 }
 
 
-void sendCommand(UART_HandleTypeDef huart2, char *str) {
+void sendCommand(UART_HandleTypeDef huart, char *str) {
   printf("%s\n",str);
 	printf("%d\n", (uint16_t) strlen(str));
 #ifndef __NO_HAL_UART
-	HAL_UART_Transmit(&huart2, (uint8_t *)str, (uint16_t) sizeof(str),100);
+	HAL_UART_Transmit(&huart, (uint8_t *)str, (uint16_t) sizeof(str),100);
 	HAL_Delay(50);
 #endif
 }
@@ -284,14 +284,14 @@ bool waitForSentence(char *wait4me, uint8_t max) {
   return false;
 }
 
-bool LOCUS_StartLogger(UART_HandleTypeDef huart2) {
-  sendCommand(huart2, PMTK_LOCUS_STARTLOG);
+bool LOCUS_StartLogger(UART_HandleTypeDef huart) {
+  sendCommand(huart, PMTK_LOCUS_STARTLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_LOGSTARTED,MAXWAITSENTENCE);
 }
 
-bool LOCUS_ReadStatus(UART_HandleTypeDef huart2) {
-  sendCommand(huart2, PMTK_LOCUS_QUERY_STATUS);
+bool LOCUS_ReadStatus(UART_HandleTypeDef huart) {
+  sendCommand(huart, PMTK_LOCUS_QUERY_STATUS);
   
   if (! waitForSentence("$PMTKLOG",MAXWAITSENTENCE))
     return false;
@@ -337,22 +337,22 @@ bool LOCUS_ReadStatus(UART_HandleTypeDef huart2) {
 }
 
 // Standby Mode Switches
-bool standby(UART_HandleTypeDef huart2) {
+bool standby(UART_HandleTypeDef huart) {
   if (inStandbyMode) {
     return false;  // Returns false if already in standby mode, so that you do not wake it up by sending commands to GPS
   }
   else {
     inStandbyMode = true;
-    sendCommand(huart2, PMTK_STANDBY);
+    sendCommand(huart, PMTK_STANDBY);
     //return waitForSentence(PMTK_STANDBY_SUCCESS);  // don't seem to be fast enough to catch the message, or something else just is not working
     return true;
   }
 }
 
-bool wakeup(UART_HandleTypeDef huart2) {
+bool wakeup(UART_HandleTypeDef huart) {
   if (inStandbyMode) {
    inStandbyMode = false;
-    sendCommand(huart2, "");  // send byte to wake it up
+    sendCommand(huart, "");  // send byte to wake it up
     return waitForSentence(PMTK_AWAKE,MAXWAITSENTENCE);
   }
   else {

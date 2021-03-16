@@ -27,8 +27,8 @@ typedef struct gpsData {
 	char nmeaGGA[MAX_NMEA];
 	char nmeaRMC[MAX_NMEA];
 	uint8_t fix;
-	float alt;
-	float speed;
+	int32_t alt;
+	int32_t speed;
 	int utc;
 	bool hasUpdate;
 	bool lock;
