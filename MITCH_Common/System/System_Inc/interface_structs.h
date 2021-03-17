@@ -44,4 +44,14 @@ typedef struct {
 	bool lock;
 } bmpData_t;
 
+
+typedef struct {
+	uint32_t timeStamp;
+	HAL_StatusTypeDef state;
+	int16_t meas;
+	int16_t ref;
+	bool hasUpdate;
+	bool lock;
+} alaData_t;
+
 #endif /* SYSTEM_SYSTEM_INC_INTERFACE_STRUCTS_H_ */
