@@ -29,34 +29,44 @@ genericDevice_t button_init(GPIO_TypeDef *port, uint16_t pin) {
 }
 
 
-HAL_StatusTypeDef button_read(genericDevice_t* device);
+uint8_t button_read(genericDevice_t* device) {
+	return 0;
+}
 
-
+// HSF
+uint8_t _getHSF(uint8_t status) {
+	return EVAL(status & _BUTTON_HSF_MASK);
+}
 uint8_t _setHSF(uint8_t status) {
 	return status | _BUTTON_HSF_MASK;
 }
-
-
 uint8_t _clrHSF(uint8_t status) {
 	return _setHSF(status) - _BUTTON_HSF_MASK;
 }
 
+// HRF
+uint8_t _getHRF(uint8_t status) {
+	return EVAL(status & _BUTTON_HRF_MASK);
+}
 uint8_t _setHRF(uint8_t status) {
 	return status | _BUTTON_HRF_MASK;
 }
-
-
 uint8_t _clrHRF(uint8_t status) {
 	return _setHSF(status) - _BUTTON_HRF_MASK;
+}
+
+// Button Mode
+uint8_t _getBMode(uint8_t status) {
+	return EVAL(status & _BUTTON_MODE_MASK);
 }
 
 uint8_t _setBMode(uint8_t status, ButtonMode_t mode) {
 	switch(mode) {
 	case ON_CHANGE:
-		return ((uint8_t)-1 - _BUTTON_MODE_MASK) & status;
+		return (status | _BUTTON_MODE_MASK) - _BUTTON_MODE_MASK;
 		break;
 	case ON_VALUE:
-		return (status | _BUTTON_MODE_MASK) - _BUTTON_MODE_MASK;
+		return status | _BUTTON_MODE_MASK;
 		break;
 	default:
 		return status;
@@ -70,6 +80,8 @@ uint8_t _setBState(uint8_t status) {
 uint8_t _clrBState(uint8_t status) {
 	return _setBState(status) - _BUTTON_STATE_MASK;
 }
+
+/*
 uint8_t _setBStateVal(uint8_t status, GPIO_PinState state) {
 	switch(state) {
 	case GPIO_PIN_SET:
@@ -81,4 +93,4 @@ uint8_t _setBStateVal(uint8_t status, GPIO_PinState state) {
 	default:
 		return status;
 	}
-}
+}*/

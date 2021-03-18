@@ -112,9 +112,9 @@ int main(void)
     printf("Starting:\r\n");
     HAL_Delay(250);
 
-    PRINT_BIN(31,1);
-    PRINT_BIN(127,1);
-    PRINT_BIN(128,0);
+    PRINT_BIN(31);
+    PRINT_BIN(127);
+    PRINT_BIN(128);
     printf("dsfd");
   /* USER CODE END 2 */
 

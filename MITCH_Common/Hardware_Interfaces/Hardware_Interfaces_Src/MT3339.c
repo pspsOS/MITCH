@@ -48,16 +48,16 @@ genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
 	return gGPS;
 }
 
-HAL_StatusTypeDef MT3339_read(genericDevice_t* device) {
+uint8_t MT3339_read(genericDevice_t* device) {
 	MT3339_t* gps = &(device->device.MT3339);
 
 	 if ( !parse(lastNMEA()) ) {
-		 return device->state;
+		 return (uint8_t) device->state;
 	 }
 	 strncpy(gps->gpsString,lastNMEA(),MAX_NMEA);
 
 
-	return device->state;
+	return (uint8_t) device->state;
 
 }
 

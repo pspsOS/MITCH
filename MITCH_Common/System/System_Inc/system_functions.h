@@ -15,9 +15,12 @@
 
 #define EVAL(EXP) (EXP ? 1 : 0)
 
-#define PRINT_BIN(EXP,NL) ({for(int i = sizeof(EXP)*8-1; i >= 0; i--)\
+#define PRINT_BIN(EXP) ({for(int i = sizeof(EXP)*8-1; i >= 0; i--)\
+							printf("%d",EVAL(READ_BIT(EXP,1<<i)));})
+
+#define PRINT_BIN_NL(EXP) ({for(int i = sizeof(EXP)*8-1; i >= 0; i--)\
 							printf("%d",EVAL(READ_BIT(EXP,1<<i)));\
-							if(NL) printf("\r\n");})
+							printf("\r\n");})
 /*
 typedef enum {
 	DENIED,

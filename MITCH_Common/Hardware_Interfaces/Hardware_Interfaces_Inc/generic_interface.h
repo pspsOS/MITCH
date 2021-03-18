@@ -90,9 +90,9 @@ typedef void (*button_fun)(void);
 
 typedef struct button {
 	/**  status = 0000srMS
+	 M = Button Mode
 	 s = Has Set Function
 	 r = Has Reset Function
-	 M = Button Mode
 	 S = State
 	 */
 	uint8_t status;
@@ -157,7 +157,7 @@ typedef union {
 	MS5607_t MS5607;
 } Device_u;
 
-typedef HAL_StatusTypeDef (*read_fun)(genericDevice_t*);
+typedef uint8_t (*read_fun)(genericDevice_t*);
 
 typedef struct genericDevice {
 	DeviceType_t deviceType;

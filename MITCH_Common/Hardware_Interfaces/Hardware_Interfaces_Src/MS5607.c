@@ -77,7 +77,7 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	return gBMP;
 }
 
-HAL_StatusTypeDef MS5607_read(genericDevice_t* device) {
+uint8_t MS5607_read(genericDevice_t* device) {
 	MS5607_t* bmp = &(device->device.MS5607);
 
 

@@ -41,6 +41,7 @@
 *.su
 *.idb
 *.pdb
+*.bin
 
 # Kernel Module Compile Results
 *.mod*
@@ -59,3 +60,4 @@ Project_Instances/JeffsHardwareTestbed/MITCH_Common
 Eclipse/Shared-MITCH-Testbed/.settings/language.settings.xml
 Eclipse/Shared-MITCH-Testbed/MITCH_Common
 Eclipse/Shared-MITCH-Testbed/MyTestbed
+
