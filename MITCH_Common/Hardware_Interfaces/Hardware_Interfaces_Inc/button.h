@@ -29,7 +29,7 @@ uint8_t _setHRF(uint8_t status);
 uint8_t _clrHRF(uint8_t status);
 uint8_t _setBMode(uint8_t status, ButtonMode_t mode);
 uint8_t _setBState(uint8_t status);
-uint8_t _rstBState(uint8_t status);
+uint8_t _clrBState(uint8_t status);
 uint8_t _setBStateVal(uint8_t status, GPIO_PinState state);
 
 #endif /* NUCLEOBUTTON_H_ */
