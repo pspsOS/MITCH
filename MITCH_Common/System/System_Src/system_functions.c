@@ -42,6 +42,9 @@ void retryTakeDelay(TickType_t length) {
 #endif
 }
 
+
+
+/*
 AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts) {
 	AccessRequest_t result = DENIED;
 #ifndef HARDWARE_EMULATOR
@@ -59,4 +62,4 @@ AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uin
 #endif
 	return result;
 }
-
+*/

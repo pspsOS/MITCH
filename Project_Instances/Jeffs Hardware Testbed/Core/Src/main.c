@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "retarget.h"
 #include "generic_interface.h"
 #include "MS5607.h"
 /* USER CODE END Includes */
@@ -104,7 +105,17 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  genericDevice_t button = MS5607_init(0,0,0);
+  RetargetInit(&huart2);
+  //genericDevice_t button = MS5607_init(0,0,0);
+  for(int i = 0; i < 500; i++) printf(" \r\n");
+    HAL_Delay(250);
+    printf("Starting:\r\n");
+    HAL_Delay(250);
+
+    PRINT_BIN(31,1);
+    PRINT_BIN(127,1);
+    PRINT_BIN(128,0);
+    printf("dsfd");
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -348,6 +359,7 @@ void StartDefaultTask(void const * argument)
   {
     osDelay(1);
   }
+  vTaskDelete(NULL);
   /* USER CODE END 5 */
 }
 
@@ -366,6 +378,7 @@ void StartTask02(void const * argument)
   {
     osDelay(1);
   }
+  vTaskDelete(NULL);
   /* USER CODE END StartTask02 */
 }
 

@@ -12,17 +12,23 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define GET_BIT(p,n) (((p >> n) & 1) == 1)
 
+#define EVAL(EXP) (EXP ? 1 : 0)
 
+#define PRINT_BIN(EXP,NL) ({for(int i = sizeof(EXP)*8-1; i >= 0; i--)\
+							printf("%d",EVAL(READ_BIT(EXP,1<<i)));\
+							if(NL) printf("\r\n");})
+/*
 typedef enum {
 	DENIED,
 	APPROVED,
 } AccessRequest_t;
-
+*/
 uint32_t getTimeStamp(void);
 void retryTakeDelay(TickType_t length);
 
-AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts);
+void printBin8(uint8_t);
+
+//AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts);
 
 #endif /* SYSTEM_SYSTEM_INC_SYSTEM_FUNCTIONS_H_ */

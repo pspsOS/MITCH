@@ -86,17 +86,12 @@ typedef struct MS5607 MS5607_t;
 typedef struct genericDevice genericDevice_t;
 
 
-typedef enum {
-	ON_CHANGE = 0,
-	ON_VALUE = 1
-} ButtonMode_t;
-
 typedef void (*button_fun)(void);
 
 typedef struct button {
-	/**  status = 0000rsMS
-	 r = Has Reset Function
+	/**  status = 0000srMS
 	 s = Has Set Function
+	 r = Has Reset Function
 	 M = Button Mode
 	 S = State
 	 */
