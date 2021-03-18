@@ -89,8 +89,9 @@ typedef struct genericDevice genericDevice_t;
 typedef void (*button_fun)(void);
 
 typedef struct button {
-	/**  status = 0000srMS
+	/**  status = 00MIsrS
 	 M = Button Mode
+	 I = Invert input
 	 s = Has Set Function
 	 r = Has Reset Function
 	 S = State

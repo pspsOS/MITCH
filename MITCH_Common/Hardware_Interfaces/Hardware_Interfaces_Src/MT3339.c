@@ -15,7 +15,7 @@ genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
 
 #ifndef __NO_HAL_UART
 	/** Define Local Variables **/
-	MT3339_t* gps = &(gGPS.device.MT3339);
+	//MT3339_t* gps = &(gGPS.device.MT3339);
 	uint8_t temporary; // Buffer to load data received
 
 

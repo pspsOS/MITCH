@@ -25,7 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "retarget.h"
 #include "generic_interface.h"
-#include "MS5607.h"
+#include "button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,16 +106,12 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   RetargetInit(&huart2);
-  //genericDevice_t button = MS5607_init(0,0,0);
+
   for(int i = 0; i < 500; i++) printf(" \r\n");
     HAL_Delay(250);
     printf("Starting:\r\n");
     HAL_Delay(250);
 
-    PRINT_BIN(31);
-    PRINT_BIN(127);
-    PRINT_BIN(128);
-    printf("dsfd");
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -326,10 +322,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : B1_Pin */
+  GPIO_InitStruct.Pin = B1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD2_Pin */
   GPIO_InitStruct.Pin = LD2_Pin;
@@ -341,6 +344,8 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void s() { printf("set\r\n"); }
+void r() { printf("rst\r\n"); }
 
 /* USER CODE END 4 */
 
@@ -354,11 +359,19 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
+	static genericDevice_t btn;
+	btn = button_init(B1_GPIO_Port, B1_Pin);
+	btn.device.button.status = _setINV(btn.device.button.status);
+	btn.device.button.status = _setBMode(btn.device.button.status, ON_VALUE);
+	btn.device.button.set_fun = s;
+	btn.device.button.reset_fun = r;
+
+	static TickType_t time_init = 0;
   /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+ while(true) {
+	 btn.read(&btn);
+	 vTaskDelayUntil(&time_init, 1000/portTICK_RATE_MS);
+ }
   vTaskDelete(NULL);
   /* USER CODE END 5 */
 }
@@ -376,7 +389,7 @@ void StartTask02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    break;
   }
   vTaskDelete(NULL);
   /* USER CODE END StartTask02 */
