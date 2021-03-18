@@ -263,6 +263,7 @@ uint8_t parseHex(char c) {
        return 0;
     if (c <= 'F')
        return (c - 'A')+10;
+    return 0;
 }
 
 bool waitForSentence(char *wait4me, uint8_t max) {
