@@ -370,7 +370,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
-	 vTaskDelayUntil(&time_init, 1000/portTICK_RATE_MS);
+	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);
   /* USER CODE END 5 */
