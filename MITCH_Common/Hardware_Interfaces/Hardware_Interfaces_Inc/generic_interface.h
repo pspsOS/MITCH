@@ -26,9 +26,6 @@ typedef enum {
 	IMU_MMA1211
 } SensorType_t;
 
-typedef enum {
-	GPIO_LED,
-} OutputType_t;
 
 typedef enum {
 	GPIO_PIN,
@@ -178,25 +175,10 @@ typedef struct genericSensor {
 typedef struct LED LED_t;
 
 typedef struct LED {
-	GPIO_PinState state;
+	uint8_t status;
+	PIN_t PIN;
 } LED_t;
 
-typedef union {
-	LED_t LED;
-} Output_u;
-
-//type
-
-typedef struct genericOutput {
-	OutputType_t outputType;
-	read_fun read;
-	Sensor_u sensor;
-	Interface_u interface;
-	HAL_StatusTypeDef state;
-
-	bool hasUpdate;
-	bool lock;
-} genericOutput_t;
 
 HAL_StatusTypeDef sendSPI(genericSensor_t* sensor, uint8_t* cmd, int cmdlen);
 HAL_StatusTypeDef receiveSPI(genericSensor_t* sensor, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);

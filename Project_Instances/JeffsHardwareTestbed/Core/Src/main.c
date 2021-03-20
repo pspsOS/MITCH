@@ -26,6 +26,7 @@
 #include "retarget.h"
 #include "generic_interface.h"
 #include "button.h"
+#include "LED.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -361,16 +362,42 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	static genericSensor_t btn;
 	btn = button_init(B1_GPIO_Port, B1_Pin);
-	_setINV(&btn);
+	_setBINV(&btn);
+	_doFToggle(&btn);
+
+	static LED_t LD2;
+	LD2 = LED_init(LD2_GPIO_Port, LD2_Pin);
+	_setLINV(&LD2);
 
 	static TickType_t time_init = 0;
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
-	 //printf("d");
-	 if(_getBChange(&btn)) (_getBValue(&btn) ? s() : r());
-	 //PPP(7);
-	 //PRINT_BIN_NL(_getBStatus(&btn));
+
+	 if(button_OnSet(&btn)) {
+		 //s();
+	 }
+
+	 if(button_OnReset(&btn)) {
+		 //r();
+	 }
+
+	 if(button_OnRising(&btn)) {
+		 LED_SetState(&LD2, !LED_GetState(&LD2));
+	 }
+
+	 if(button_OnFalling(&btn)) {
+		 LED_Reset(&LD2);
+	 }
+
+	 if(button_OnRToggle(&btn)) {
+		 //LED_Set(&LD2);
+	 }
+
+	 if(button_OnFToggle(&btn)) {
+		 //LED_Reset(&LD2);
+	 }
+	 PRINT_BIN_NL(_getBStatus(&btn));
 	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);

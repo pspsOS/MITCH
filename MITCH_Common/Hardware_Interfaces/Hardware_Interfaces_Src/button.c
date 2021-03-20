@@ -37,7 +37,7 @@ uint8_t button_read(genericSensor_t* sensor) {
 	#ifndef HARDWARE_EMULATOR
 		PIN_t pin = sensor->interface.PIN;
 		value = HAL_GPIO_ReadPin(pin.port, pin.pin);
-		if(_getINV(sensor)) value = !value;
+		if(_getBINV(sensor)) value = !value;
 	#endif
 
 	// Handle Change Flag
@@ -48,10 +48,13 @@ uint8_t button_read(genericSensor_t* sensor) {
 	if(value) _setBValue(sensor);
 	else _clrBValue(sensor);
 
+
+	if((value != prevValue) && value) _doRToggle(sensor);
+	if((value != prevValue) && !value) _doFToggle(sensor);
 	return (uint8_t) value;
 }
 
-ButtonState_t button_getState(genericSensor_t* sensor) {
+ButtonState_t button_GetState(genericSensor_t* sensor) {
 	button_t* btn = &(sensor->sensor.button);
 	switch(btn->status & _BUTTON_STATE_MASK) {
 	case 0b00:
@@ -71,18 +74,67 @@ ButtonState_t button_getState(genericSensor_t* sensor) {
 	}
 }
 
+bool button_OnSet(genericSensor_t* sensor) {
+	return _getBValue(sensor);
+}
+bool button_OnReset(genericSensor_t* sensor) {
+	return !_getBValue(sensor);
+}
+bool button_OnRising(genericSensor_t* sensor) {
+	return _getBValue(sensor) && _getBChange(sensor);
+}
+bool button_OnFalling(genericSensor_t* sensor) {
+	return !_getBValue(sensor) && _getBChange(sensor);
+}
+bool button_OnRToggle(genericSensor_t* sensor) {
+	return button_OnRising(sensor) && _getRToggle(sensor);
+}
+bool button_OnFToggle(genericSensor_t* sensor) {
+	return button_OnFalling(sensor) && _getFToggle(sensor);
+}
+
 
 // INV
-bool _getINV(genericSensor_t* sensor) {
+bool _getBINV(genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_INV_MASK);
 }
-void _setINV(genericSensor_t* sensor) {
+void _setBINV(genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_INV_MASK;
 }
-void _clrINV(genericSensor_t* sensor) {
+void _clrBINV(genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_INV_MASK);
 }
 
+
+// Button Rising Toggle
+bool _getRToggle(genericSensor_t* sensor) {
+	return EVAL(sensor->sensor.button.status & _BUTTON_RTOGGLE_MASK);
+}
+void _setRToggle(genericSensor_t* sensor) {
+	sensor->sensor.button.status |= _BUTTON_RTOGGLE_MASK;
+}
+void _clrRToggle(genericSensor_t* sensor) {
+	sensor->sensor.button.status &= INV(_BUTTON_RTOGGLE_MASK);
+}
+void _doRToggle(genericSensor_t* sensor) {
+	(_getRToggle(sensor)) ? (_clrRToggle(sensor)) : (_setRToggle(sensor));
+}
+
+
+// Button Falling Toggle
+bool _getFToggle(genericSensor_t* sensor) {
+	return EVAL(sensor->sensor.button.status & _BUTTON_FTOGGLE_MASK);
+}
+void _setFToggle(genericSensor_t* sensor) {
+	sensor->sensor.button.status |= _BUTTON_FTOGGLE_MASK;
+}
+
+void _clrFToggle(genericSensor_t* sensor) {
+	sensor->sensor.button.status &= INV(_BUTTON_FTOGGLE_MASK);
+}
+void _doFToggle(genericSensor_t* sensor) {
+	(_getFToggle(sensor)) ? (_clrFToggle(sensor)) : (_setFToggle(sensor));
+}
 
 // Button Change
 bool _getBChange(genericSensor_t* sensor) {
