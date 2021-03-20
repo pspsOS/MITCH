@@ -361,8 +361,8 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	static genericDevice_t btn;
 	btn = button_init(B1_GPIO_Port, B1_Pin);
-	btn.device.button.status = _setINV(btn.device.button.status);
-	btn.device.button.status = _setBMode(btn.device.button.status, ON_VALUE);
+	_setINV(&btn);
+	_setBMode(&btn, ON_VALUE);
 	btn.device.button.set_fun = s;
 	btn.device.button.reset_fun = r;
 

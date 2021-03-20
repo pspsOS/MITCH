@@ -99,6 +99,8 @@ typedef struct button {
 	uint8_t status;
 	button_fun set_fun;
 	button_fun reset_fun;
+	button_fun rising_fun;
+	button_fun falling_fun;
 } button_t;
 
 /* Separate IMU Structs */

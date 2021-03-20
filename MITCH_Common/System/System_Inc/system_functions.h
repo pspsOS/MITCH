@@ -14,6 +14,7 @@
 
 
 #define EVAL(EXP) (EXP ? 1 : 0)
+#define INV(EXP) (typeof(EXP))(~EXP)
 
 #define PRINT_BIN(EXP) ({for(int i = sizeof(EXP)*8-1; i >= 0; i--)\
 							printf("%d",EVAL(READ_BIT(EXP,1<<i)));})
