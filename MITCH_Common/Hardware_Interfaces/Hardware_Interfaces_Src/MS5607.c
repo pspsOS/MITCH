@@ -80,9 +80,12 @@ genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 uint8_t MS5607_read(genericSensor_t* sensor) {
 	MS5607_t* bmp = &(sensor->sensor.MS5607);
 
-
-
-	while(sensor->lock) retryTakeDelay(DEFAULT_TAKE_DELAY);
+	while(sensor->lock)
+	#ifndef HARDWARE_EMULATOR
+		retryTakeDelay(DEFAULT_TAKE_DELAY);
+	#else
+		break;
+	#endif
 	sensor->lock = true;
 
 #ifndef __NO_HAL_SPI
