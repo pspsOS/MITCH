@@ -7,14 +7,14 @@
 
 #include "MS5607.h"
 
-genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin) {
+genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin) {
 	/** Define MS5607 Struct **/
 	MS5607_t _bmp = {0};
-	genericDevice_t gBMP = {0};
+	genericSensor_t gBMP = {0};
 
-	gBMP.deviceType = BMP_MS5607;
+	gBMP.sensorType = BMP_MS5607;
 	gBMP.read = MS5607_read;
-	gBMP.device.MS5607 = _bmp;
+	gBMP.sensor.MS5607 = _bmp;
 //#ifndef __NO_HAL_SPI
 	gBMP.interface.SPI.bus = bus;
 	gBMP.interface.SPI.port = port;
@@ -30,10 +30,10 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 #ifndef __NO_HAL_SPI
 
 	/** Define Local Variables **/
-	MS5607_t* bmp = &(gBMP.device.MS5607);
+	MS5607_t* bmp = &(gBMP.sensor.MS5607);
 
 	uint8_t dataIn[2]; // Buffer to load data received
-	uint8_t cmd;       // Command sent to device
+	uint8_t cmd;       // Command sent to sensor
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
 
 	//Reset baro after power on
@@ -77,41 +77,41 @@ genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	return gBMP;
 }
 
-uint8_t MS5607_read(genericDevice_t* device) {
-	MS5607_t* bmp = &(device->device.MS5607);
+uint8_t MS5607_read(genericSensor_t* sensor) {
+	MS5607_t* bmp = &(sensor->sensor.MS5607);
 
 
 
-	while(device->lock) retryTakeDelay(DEFAULT_TAKE_DELAY);
-	device->lock = true;
+	while(sensor->lock) retryTakeDelay(DEFAULT_TAKE_DELAY);
+	sensor->lock = true;
 
 #ifndef __NO_HAL_SPI
 
 	uint8_t dataIn[2]; // Buffer to load data received
-	uint8_t cmd;       // Command sent to device
-	SPI_t* SPI = &(device->interface.SPI);
+	uint8_t cmd;       // Command sent to sensor
+	SPI_t* SPI = &(sensor->interface.SPI);
 	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_RESET);
 
 
 	//Get values from sensor
 	cmd = D1_1024; //This value will define conversion time, accuracy, and current draw
-	if (sendSPI(device, &cmd, 1)) return device->state;
+	if (sendSPI(sensor, &cmd, 1)) return sensor->state;
 	HAL_Delay(CONV_T_1024);
 
 	cmd = 0x00;
-	if (receiveSPI(device, &cmd, 1, dataIn, 2)) return device->state;
+	if (receiveSPI(sensor, &cmd, 1, dataIn, 2)) return sensor->state;
 	bmp->digitalPres = (dataIn[0] << 8) | dataIn[1];
 
 	cmd = D2_1024; //This value will define conversion time, accuracy, and current draw
-	if (sendSPI(device, &cmd, 1)) return device->state;
+	if (sendSPI(sensor, &cmd, 1)) return sensor->state;
 	HAL_Delay(CONV_T_1024);
 
 	cmd = 0x00;
-	if (receiveSPI(device, &cmd, 1, dataIn, 2)) return device->state;
+	if (receiveSPI(sensor, &cmd, 1, dataIn, 2)) return sensor->state;
 	bmp->digitalTemp = (dataIn[0] << 8) | dataIn[1];
 
 	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_SET);
-	//unlockSPI(device);
+	//unlockSPI(sensor);
 #endif
 
 	//Calculate calibrated pressure
@@ -126,7 +126,7 @@ uint8_t MS5607_read(genericDevice_t* device) {
 	//P = D1 * SENS - OFF = (D1 * SENS / 2 ^ 21 - OFF) / 2 ^ 15
 	bmp->pressure = (bmp->digitalPres * bmp->sens / 2097152 - bmp->off) / 32768; //This is the magic number in mbar
 
-	return device->state;
+	return sensor->state;
 }
 
 

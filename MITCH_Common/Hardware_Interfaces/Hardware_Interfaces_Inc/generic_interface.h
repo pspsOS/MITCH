@@ -24,7 +24,11 @@ typedef enum {
 	IMU_ICM20948,
 	BMP_MS5607,
 	IMU_MMA1211
-} DeviceType_t;
+} SensorType_t;
+
+typedef enum {
+	GPIO_LED,
+} OutputType_t;
 
 typedef enum {
 	GPIO_PIN,
@@ -72,9 +76,10 @@ typedef union Interface {
 } Interface_u;
 
 
-/** Devices **/
+/** Sensors **/
 //Button
 typedef struct button button_t;
+
 //IMU
 typedef struct ICM20948 ICM20948_t;
 typedef struct MMA1211 MMA1211_t;
@@ -83,10 +88,8 @@ typedef struct MT3339 MT3339_t;
 //BMP
 typedef struct MS5607 MS5607_t;
 //Generic
-typedef struct genericDevice genericDevice_t;
+typedef struct genericSensor genericSensor_t;
 
-
-typedef void (*button_fun)(void);
 
 typedef struct button {
 	/**  status = 00000ICV
@@ -96,6 +99,7 @@ typedef struct button {
 	 */
 	uint8_t status;
 } button_t;
+
 
 /* Separate IMU Structs */
 
@@ -152,24 +156,51 @@ typedef union {
 	MMA1211_t MMA1211;
 	MT3339_t MT3339;
 	MS5607_t MS5607;
-} Device_u;
+} Sensor_u;
 
-typedef uint8_t (*read_fun)(genericDevice_t*);
+typedef uint8_t (*read_fun)(genericSensor_t*);
 
-typedef struct genericDevice {
-	DeviceType_t deviceType;
+typedef struct genericSensor {
+	SensorType_t sensorType;
 	read_fun read;
-	Device_u device;
+	Sensor_u sensor;
 	Interface_u interface;
 	HAL_StatusTypeDef state;
 
 	bool hasUpdate;
 	bool lock;
-} genericDevice_t;
+} genericSensor_t;
 
-HAL_StatusTypeDef sendSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen);
-HAL_StatusTypeDef receiveSPI(genericDevice_t* device, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);
+
+
+
+/** Outputs **/
+typedef struct LED LED_t;
+
+typedef struct LED {
+	GPIO_PinState state;
+} LED_t;
+
+typedef union {
+	LED_t LED;
+} Output_u;
+
+//type
+
+typedef struct genericOutput {
+	OutputType_t outputType;
+	read_fun read;
+	Sensor_u sensor;
+	Interface_u interface;
+	HAL_StatusTypeDef state;
+
+	bool hasUpdate;
+	bool lock;
+} genericOutput_t;
+
+HAL_StatusTypeDef sendSPI(genericSensor_t* sensor, uint8_t* cmd, int cmdlen);
+HAL_StatusTypeDef receiveSPI(genericSensor_t* sensor, uint8_t* cmd, int cmdlen, uint8_t * data, int datalen);
 HAL_StatusTypeDef interfaceLock(InterfaceLock_t* lock, uint32_t retryDelay, uint32_t timeout);
-HAL_StatusTypeDef interfaceUnlock(InterfaceLock_t* lock, genericDevice_t* device);
+HAL_StatusTypeDef interfaceUnlock(InterfaceLock_t* lock, genericSensor_t* sensor);
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */

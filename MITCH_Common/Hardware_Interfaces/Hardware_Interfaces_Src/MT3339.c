@@ -3,19 +3,19 @@
 #include "MT3339.h"
 #include <string.h>
 
-genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
+genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 	/** Define MT3339 Struct **/
 	MT3339_t _gps = {0};
 
-	genericDevice_t gGPS = {0};
-	gGPS.deviceType = GPS_MT3339;
+	genericSensor_t gGPS = {0};
+	gGPS.sensorType = GPS_MT3339;
 	gGPS.read = MT3339_read;
-	gGPS.device.MT3339 = _gps;
+	gGPS.sensor.MT3339 = _gps;
 	gGPS.interface.UART.huart = huart;
 
 #ifndef __NO_HAL_UART
 	/** Define Local Variables **/
-	//MT3339_t* gps = &(gGPS.device.MT3339);
+	//MT3339_t* gps = &(gGPS.sensor.MT3339);
 	uint8_t temporary; // Buffer to load data received
 
 
@@ -48,30 +48,30 @@ genericDevice_t MT3339_init(UART_HandleTypeDef *huart) {
 	return gGPS;
 }
 
-uint8_t MT3339_read(genericDevice_t* device) {
-	MT3339_t* gps = &(device->device.MT3339);
+uint8_t MT3339_read(genericSensor_t* sensor) {
+	MT3339_t* gps = &(sensor->sensor.MT3339);
 
 	 if ( !parse(lastNMEA()) ) {
-		 return (uint8_t) device->state;
+		 return (uint8_t) sensor->state;
 	 }
 	 strncpy(gps->gpsString,lastNMEA(),MAX_NMEA);
 
 
-	return (uint8_t) device->state;
+	return (uint8_t) sensor->state;
 
 }
 
 
-HAL_StatusTypeDef MT3339_receive(genericDevice_t* device,uint8_t* buffer) {
+HAL_StatusTypeDef MT3339_receive(genericSensor_t* sensor,uint8_t* buffer) {
 #ifndef __NO_HAL_UART
-	MT3339_t* gps = &(device->device.MT3339);
-	UART_HandleTypeDef* huart = device->interface.UART.huart;
+	//MT3339_t* gps = &(sensor->sensor.MT3339);
+	UART_HandleTypeDef* huart = sensor->interface.UART.huart;
 	 // Buffer to load data received
-	if (huart->Instance == device->interface.UART.huart->Instance)  {
+	if (huart->Instance == sensor->interface.UART.huart->Instance)  {
 			//printf("hi");
 			HAL_UART_Receive_IT(huart,buffer, 1);
 			read(*buffer);
 	}
 #endif
-	return device->state;
+	return sensor->state;
 }

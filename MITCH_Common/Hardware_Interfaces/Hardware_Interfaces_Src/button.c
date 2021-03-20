@@ -7,14 +7,14 @@
 
 #include "button.h"
 
-genericDevice_t button_init(GPIO_TypeDef *port, uint16_t pin) {
+genericSensor_t button_init(GPIO_TypeDef *port, uint16_t pin) {
 	button_t _btn = {0};
-	genericDevice_t gBTN = {0};
+	genericSensor_t gBTN = {0};
 
-	gBTN.deviceType = GPIO_BUTTON;
+	gBTN.sensorType = GPIO_BUTTON;
 	gBTN.read = button_read;
 
-	gBTN.device.button = _btn;
+	gBTN.sensor.button = _btn;
 
 	gBTN.interface.PIN.port = port;
 	gBTN.interface.PIN.pin = pin;
@@ -30,29 +30,29 @@ genericDevice_t button_init(GPIO_TypeDef *port, uint16_t pin) {
 }
 
 
-uint8_t button_read(genericDevice_t* device) {
-	bool prevValue = _getBValue(device);
+uint8_t button_read(genericSensor_t* sensor) {
+	bool prevValue = _getBValue(sensor);
 	bool value = prevValue;
 
 	#ifndef HARDWARE_EMULATOR
-		PIN_t pin = device->interface.PIN;
+		PIN_t pin = sensor->interface.PIN;
 		value = HAL_GPIO_ReadPin(pin.port, pin.pin);
-		if(_getINV(device)) value = !value;
+		if(_getINV(sensor)) value = !value;
 	#endif
 
 	// Handle Change Flag
-	if(value != prevValue) _setBChange(device);
-	else _clrBChange(device);
+	if(value != prevValue) _setBChange(sensor);
+	else _clrBChange(sensor);
 
 	// Handle Value Flag;
-	if(value) _setBValue(device);
-	else _clrBValue(device);
+	if(value) _setBValue(sensor);
+	else _clrBValue(sensor);
 
 	return (uint8_t) value;
 }
 
-ButtonState_t button_getState(genericDevice_t* device) {
-	button_t* btn = &(device->device.button);
+ButtonState_t button_getState(genericSensor_t* sensor) {
+	button_t* btn = &(sensor->sensor.button);
 	switch(btn->status & _BUTTON_STATE_MASK) {
 	case 0b00:
 		return BUTTON_RESET;
@@ -73,42 +73,42 @@ ButtonState_t button_getState(genericDevice_t* device) {
 
 
 // INV
-bool _getINV(genericDevice_t* device) {
-	return EVAL(device->device.button.status & _BUTTON_INV_MASK);
+bool _getINV(genericSensor_t* sensor) {
+	return EVAL(sensor->sensor.button.status & _BUTTON_INV_MASK);
 }
-void _setINV(genericDevice_t* device) {
-	device->device.button.status |= _BUTTON_INV_MASK;
+void _setINV(genericSensor_t* sensor) {
+	sensor->sensor.button.status |= _BUTTON_INV_MASK;
 }
-void _clrINV(genericDevice_t* device) {
-	device->device.button.status &= INV(_BUTTON_INV_MASK);
+void _clrINV(genericSensor_t* sensor) {
+	sensor->sensor.button.status &= INV(_BUTTON_INV_MASK);
 }
 
 
 // Button Change
-bool _getBChange(genericDevice_t* device) {
-	return EVAL(device->device.button.status & _BUTTON_CHANGE_MASK);
+bool _getBChange(genericSensor_t* sensor) {
+	return EVAL(sensor->sensor.button.status & _BUTTON_CHANGE_MASK);
 }
-void _setBChange(genericDevice_t* device) {
-	device->device.button.status |= _BUTTON_CHANGE_MASK;
+void _setBChange(genericSensor_t* sensor) {
+	sensor->sensor.button.status |= _BUTTON_CHANGE_MASK;
 }
 
-void _clrBChange(genericDevice_t* device) {
-	device->device.button.status &= INV(_BUTTON_CHANGE_MASK);
+void _clrBChange(genericSensor_t* sensor) {
+	sensor->sensor.button.status &= INV(_BUTTON_CHANGE_MASK);
 }
 
 // Button Value
-bool _getBValue(genericDevice_t* device) {
-	return EVAL(device->device.button.status & _BUTTON_VALUE_MASK);
+bool _getBValue(genericSensor_t* sensor) {
+	return EVAL(sensor->sensor.button.status & _BUTTON_VALUE_MASK);
 }
-void _setBValue(genericDevice_t* device) {
-	device->device.button.status |= _BUTTON_VALUE_MASK;
-}
-
-void _clrBValue(genericDevice_t* device) {
-	device->device.button.status &= INV(_BUTTON_VALUE_MASK);
+void _setBValue(genericSensor_t* sensor) {
+	sensor->sensor.button.status |= _BUTTON_VALUE_MASK;
 }
 
-uint8_t _getBStatus(genericDevice_t* device) {
-	return device->device.button.status;
+void _clrBValue(genericSensor_t* sensor) {
+	sensor->sensor.button.status &= INV(_BUTTON_VALUE_MASK);
+}
+
+uint8_t _getBStatus(genericSensor_t* sensor) {
+	return sensor->sensor.button.status;
 }
 

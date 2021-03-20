@@ -24,21 +24,21 @@ typedef enum {
 	BUTTON_FALLING,
 } ButtonState_t;
 
-genericDevice_t button_init(GPIO_TypeDef *port, uint16_t pin);
-uint8_t button_read(genericDevice_t* device);
-ButtonState_t button_getState(genericDevice_t* device);
+genericSensor_t button_init(GPIO_TypeDef *port, uint16_t pin);
+uint8_t button_read(genericSensor_t* sensor);
+ButtonState_t button_getState(genericSensor_t* sensor);
 
-bool _getINV(genericDevice_t* device);
-void _setINV(genericDevice_t* device);
-void _clrINV(genericDevice_t* device);
-bool _getBChange(genericDevice_t* device);
-void _setBChange(genericDevice_t* device);
-void _clrBChange(genericDevice_t* device);
-bool _getBValue(genericDevice_t* device);
-void _setBValue(genericDevice_t* device);
-void _clrBValue(genericDevice_t* device);
+bool _getINV(genericSensor_t* sensor);
+void _setINV(genericSensor_t* sensor);
+void _clrINV(genericSensor_t* sensor);
+bool _getBChange(genericSensor_t* sensor);
+void _setBChange(genericSensor_t* sensor);
+void _clrBChange(genericSensor_t* sensor);
+bool _getBValue(genericSensor_t* sensor);
+void _setBValue(genericSensor_t* sensor);
+void _clrBValue(genericSensor_t* sensor);
 
-uint8_t _getBStatus(genericDevice_t* device);
+uint8_t _getBStatus(genericSensor_t* sensor);
 
 
 #endif /* NUCLEOBUTTON_H_ */

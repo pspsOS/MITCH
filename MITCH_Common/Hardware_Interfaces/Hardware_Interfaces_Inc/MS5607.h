@@ -27,8 +27,8 @@
 #define CONV_T_4096 	10
 
 
-genericDevice_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
-uint8_t MS5607_read(genericDevice_t* device);
+genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
+uint8_t MS5607_read(genericSensor_t* sensor);
 
 
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_MS5607_H_ */

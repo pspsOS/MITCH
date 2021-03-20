@@ -359,7 +359,7 @@ void r() { printf("rst\r\n"); }
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	static genericDevice_t btn;
+	static genericSensor_t btn;
 	btn = button_init(B1_GPIO_Port, B1_Pin);
 	_setINV(&btn);
 

@@ -14,6 +14,6 @@
 #include "system_functions.h"
 
 void bmpSetInterfaceLock(InterfaceLock_t* lock);
-HAL_StatusTypeDef bmpRead(genericDevice_t* device);
+HAL_StatusTypeDef bmpRead(genericSensor_t* device);
 
 #endif /* SOFTWARE_ACQUISITION_ACQUISITION_INC_BMP_ACQUISITION_H_ */

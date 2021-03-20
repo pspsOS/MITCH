@@ -13,7 +13,7 @@ void bmpSetInterfaceLock(InterfaceLock_t* lock) {
 	_lock = lock;
 }
 
-HAL_StatusTypeDef bmpRead(genericDevice_t* device) {
+HAL_StatusTypeDef bmpRead(genericSensor_t* device) {
 
 	//if(_lock) interfaceLock(_lock, DEFAULT_TAKE_DELAY, device->interface.SPI.timeout);
 	device->read(device);
