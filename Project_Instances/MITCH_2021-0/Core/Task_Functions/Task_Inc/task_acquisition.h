@@ -14,10 +14,10 @@
 
 #include "MS5607.h"
 
-volatile genericDevice_t gps;
-volatile genericDevice_t bmp;
-volatile genericDevice_t imu;
-volatile genericDevice_t ala;
+volatile genericSensor_t gps;
+volatile genericSensor_t bmp;
+volatile genericSensor_t imu;
+volatile genericSensor_t ala;
 
 void task_acquisition_setup();
 void task_acquisition_loop();

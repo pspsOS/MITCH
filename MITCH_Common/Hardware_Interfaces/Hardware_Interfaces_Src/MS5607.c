@@ -21,6 +21,7 @@ genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	gBMP.interface.SPI.pin = pin;
 	gBMP.interface.SPI.timeout = HAL_MAX_DELAY;
 
+	gBMP.state = HAL_OK;
 //#endif
 	gBMP.hasUpdate = true;
 	gBMP.lock = false;
@@ -78,8 +79,6 @@ genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 }
 
 uint8_t MS5607_read(genericSensor_t* sensor) {
-	MS5607_t* bmp = &(sensor->sensor.MS5607);
-
 	while(sensor->lock)
 	#ifndef HARDWARE_EMULATOR
 		retryTakeDelay(DEFAULT_TAKE_DELAY);
@@ -89,7 +88,7 @@ uint8_t MS5607_read(genericSensor_t* sensor) {
 	sensor->lock = true;
 
 #ifndef __NO_HAL_SPI
-
+	MS5607_t* bmp = &(sensor->sensor.MS5607);
 	uint8_t dataIn[2]; // Buffer to load data received
 	uint8_t cmd;       // Command sent to sensor
 	SPI_t* SPI = &(sensor->interface.SPI);
@@ -114,8 +113,6 @@ uint8_t MS5607_read(genericSensor_t* sensor) {
 	bmp->digitalTemp = (dataIn[0] << 8) | dataIn[1];
 
 	HAL_GPIO_WritePin(SPI->port, SPI->pin, GPIO_PIN_SET);
-	//unlockSPI(sensor);
-#endif
 
 	//Calculate calibrated pressure
 	//T = D2 - TREF = D2 - C5 * 2 ^ 8
@@ -128,6 +125,12 @@ uint8_t MS5607_read(genericSensor_t* sensor) {
 	bmp->sens = bmp->senst1 * 65536 + (bmp->tcs * bmp->deltaT) / 128;
 	//P = D1 * SENS - OFF = (D1 * SENS / 2 ^ 21 - OFF) / 2 ^ 15
 	bmp->pressure = (bmp->digitalPres * bmp->sens / 2097152 - bmp->off) / 32768; //This is the magic number in mbar
+#else
+	sensor->state = HAL_ERROR;
+#endif
+
+
+	sensor->lock = false;
 
 	return sensor->state;
 }
