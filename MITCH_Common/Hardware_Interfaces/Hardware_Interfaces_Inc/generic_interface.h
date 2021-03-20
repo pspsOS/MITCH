@@ -89,18 +89,12 @@ typedef struct genericDevice genericDevice_t;
 typedef void (*button_fun)(void);
 
 typedef struct button {
-	/**  status = 00MIsrS
-	 M = Button Mode
+	/**  status = 00000ICV
 	 I = Invert input
-	 s = Has Set Function
-	 r = Has Reset Function
-	 S = State
+	 C = Change
+	 V = Value
 	 */
 	uint8_t status;
-	button_fun set_fun;
-	button_fun reset_fun;
-	button_fun rising_fun;
-	button_fun falling_fun;
 } button_t;
 
 /* Separate IMU Structs */

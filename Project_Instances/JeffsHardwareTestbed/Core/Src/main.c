@@ -362,14 +362,15 @@ void StartDefaultTask(void const * argument)
 	static genericDevice_t btn;
 	btn = button_init(B1_GPIO_Port, B1_Pin);
 	_setINV(&btn);
-	_setBMode(&btn, ON_VALUE);
-	btn.device.button.set_fun = s;
-	btn.device.button.reset_fun = r;
 
 	static TickType_t time_init = 0;
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
+	 //printf("d");
+	 if(_getBChange(&btn)) (_getBValue(&btn) ? s() : r());
+	 //PPP(7);
+	 //PRINT_BIN_NL(_getBStatus(&btn));
 	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);
