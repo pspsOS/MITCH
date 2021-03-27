@@ -56,6 +56,10 @@ void LED_Reset(LED_t* led) {
 #endif
 }
 
+void LED_Invert(LED_t* led) {
+	_getLINV(led) ? _clrLINV(led) : _setLINV(led);
+}
+
 bool _getLINV(LED_t* led) {
 	return EVAL(led->status & _LED_INV_MASK);
 }

@@ -74,6 +74,10 @@ ButtonState_t button_GetState(genericSensor_t* sensor) {
 	}
 }
 
+void button_Invert(genericSensor_t* sensor) {
+	_getBINV(sensor) ? _clrBINV(sensor) : _setBINV(sensor);
+}
+
 bool button_OnSet(genericSensor_t* sensor) {
 	return _getBValue(sensor);
 }

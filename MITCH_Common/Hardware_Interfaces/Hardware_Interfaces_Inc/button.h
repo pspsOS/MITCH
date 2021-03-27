@@ -29,6 +29,7 @@ typedef enum {
 genericSensor_t button_init(GPIO_TypeDef *port, uint16_t pin);
 uint8_t button_read(genericSensor_t* sensor);
 ButtonState_t button_GetState(genericSensor_t* sensor);
+void button_Invert(genericSensor_t* sensor);
 
 bool button_OnSet(genericSensor_t* sensor);
 bool button_OnReset(genericSensor_t* sensor);

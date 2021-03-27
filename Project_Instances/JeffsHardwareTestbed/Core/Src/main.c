@@ -45,6 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 UART_HandleTypeDef huart2;
 
@@ -61,6 +62,7 @@ osStaticThreadDef_t myTask02ControlBlock;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void const * argument);
@@ -103,6 +105,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
@@ -222,14 +225,14 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = ENABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 2;
   hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -314,6 +317,22 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -362,18 +381,26 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	static genericSensor_t btn;
 	btn = button_init(B1_GPIO_Port, B1_Pin);
-	_setBINV(&btn);
+	button_Invert(&btn);
 	_doFToggle(&btn);
 
 	static LED_t LD2;
 	LD2 = LED_init(LD2_GPIO_Port, LD2_Pin);
-	_setLINV(&LD2);
+	//_setLINV(&LD2);
+	static uint32_t adc_val[2] = {0};
 
 	static TickType_t time_init = 0;
+
+
+	 //HAL_ADCEx_InjectedStart(&hadc1);
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
+	 HAL_ADC_Start(&hadc1);
+	 HAL_ADC_PollForConversion(&hadc1, 1000);
+	 adc_val[0] = HAL_ADC_GetValue(&hadc1);
 
+	 HAL_ADC_Stop(&hadc1);
 	 if(button_OnSet(&btn)) {
 		 //s();
 	 }
@@ -384,6 +411,9 @@ void StartDefaultTask(void const * argument)
 
 	 if(button_OnRising(&btn)) {
 		 LED_SetState(&LD2, !LED_GetState(&LD2));
+
+
+
 	 }
 
 	 if(button_OnFalling(&btn)) {
@@ -397,8 +427,15 @@ void StartDefaultTask(void const * argument)
 	 if(button_OnFToggle(&btn)) {
 		 //LED_Reset(&LD2);
 	 }
-	 PRINT_BIN_NL(_getBStatus(&btn));
-	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
+	 adc_val[1] = HAL_ADC_GetValue(&hadc1);
+	 printf("%d %d",(int) adc_val[0], (int) adc_val[1]);
+
+
+
+	 printf("\r\n");
+	 //HAL_ADC_Stop(&hadc1);
+	// PRINT_BIN_NL(_getBStatus(&btn));
+	 vTaskDelayUntil(&time_init, 1000/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);
   /* USER CODE END 5 */

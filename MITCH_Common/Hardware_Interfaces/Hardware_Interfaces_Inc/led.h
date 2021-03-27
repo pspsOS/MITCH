@@ -19,6 +19,7 @@ GPIO_PinState LED_GetState(LED_t* led);
 void LED_SetState(LED_t* led, GPIO_PinState state);
 void LED_Set(LED_t* led);
 void LED_Reset(LED_t* led);
+void LED_Invert(LED_t* led);
 
 bool _getLINV(LED_t* led);
 void _setLINV(LED_t* led);
