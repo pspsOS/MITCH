@@ -44,4 +44,27 @@ void NucleoF4_Init();
 
 #endif /* NUCLEO_F4 */
 
+#ifdef NUCLEO_L4
+
+#include "stm32l432xx.h"
+
+#if !defined(NO_RETARGET) && !defined(DO_RETARGET)
+#define DO_RETARGET
+#endif
+
+#ifndef NO_LED
+#include "led.h"
+	#ifndef LD3_Pin
+	#define LD3_Pin GPIO_PIN_3
+	#endif
+	#ifndef LD3_GPIO_Port
+	#define LD3_GPIO_Port GPIOB
+	#endif
+	volatile LED_t LD3;
+#endif /* NO_LED */
+
+void NucleoL4_Init();
+
+#endif
+
 #endif /* SYSTEM_SYSTEM_INC_NUCLEO_PROFILES_H_ */

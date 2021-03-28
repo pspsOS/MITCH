@@ -58,8 +58,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LD3_Pin GPIO_PIN_3
+#define LD3_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define NUCLEO_L4
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
