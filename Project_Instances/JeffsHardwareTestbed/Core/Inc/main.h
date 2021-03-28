@@ -72,6 +72,11 @@ void Error_Handler(void);
 #define ADCI2_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
+#define DO_RETARGET
+#define NUCLEO_F4
+//#define NO_BUTTON
+//#define NO_LD2
+
 #define DEFAULT_TAKE_DELAY (50)
 
 /* USER CODE END Private defines */

@@ -1,5 +1,7 @@
 // All credit to Carmine Noviello for this code
 // https://github.com/cnoviello/mastering-stm32/blob/master/nucleo-f030R8/system/src/retarget/retarget.c
+#include <retarget.h>
+#ifdef DO_RETARGET
 
 #include <_ansi.h>
 #include <_syslist.h>
@@ -8,7 +10,7 @@
 #include <sys/times.h>
 #include <limits.h>
 #include <signal.h>
-#include <../Inc/retarget.h>
+
 #include <stdint.h>
 #include <stdio.h>
 
@@ -92,3 +94,5 @@ int _fstat(int fd, struct stat* st) {
 }
 
 #endif //#if !defined(OS_USE_SEMIHOSTING)
+
+#endif /* DO_RETARGET */

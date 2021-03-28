@@ -27,40 +27,40 @@ typedef enum {
 } ButtonState_t;
 
 genericSensor_t button_init(GPIO_TypeDef *port, uint16_t pin);
-uint8_t button_read(genericSensor_t* sensor);
-ButtonState_t button_GetState(genericSensor_t* sensor);
-void button_Invert(genericSensor_t* sensor);
+uint8_t button_read(volatile genericSensor_t* sensor);
+ButtonState_t button_GetState(volatile genericSensor_t* sensor);
+void button_Invert(volatile genericSensor_t* sensor);
 
-bool button_OnSet(genericSensor_t* sensor);
-bool button_OnReset(genericSensor_t* sensor);
-bool button_OnRising(genericSensor_t* sensor);
-bool button_OnFalling(genericSensor_t* sensor);
-bool button_OnRToggle(genericSensor_t* sensor);
-bool button_OnFToggle(genericSensor_t* sensor);
+bool button_OnSet(volatile genericSensor_t* sensor);
+bool button_OnReset(volatile genericSensor_t* sensor);
+bool button_OnRising(volatile genericSensor_t* sensor);
+bool button_OnFalling(volatile genericSensor_t* sensor);
+bool button_OnRToggle(volatile genericSensor_t* sensor);
+bool button_OnFToggle(volatile genericSensor_t* sensor);
 
 
-bool _getBINV(genericSensor_t* sensor);
-void _setBINV(genericSensor_t* sensor);
-void _clrBINV(genericSensor_t* sensor);
+bool _getBINV(volatile genericSensor_t* sensor);
+void _setBINV(volatile genericSensor_t* sensor);
+void _clrBINV(volatile genericSensor_t* sensor);
 
-bool _getRToggle(genericSensor_t* sensor);
-void _setRToggle(genericSensor_t* sensor);
-void _clrRToggle(genericSensor_t* sensor);
-void _doRToggle(genericSensor_t* sensor);
+bool _getRToggle(volatile genericSensor_t* sensor);
+void _setRToggle(volatile genericSensor_t* sensor);
+void _clrRToggle(volatile genericSensor_t* sensor);
+void _doRToggle(volatile genericSensor_t* sensor);
 
-bool _getFToggle(genericSensor_t* sensor);
-void _setFToggle(genericSensor_t* sensor);
-void _clrFToggle(genericSensor_t* sensor);
-void _doFToggle(genericSensor_t* sensor);
+bool _getFToggle(volatile genericSensor_t* sensor);
+void _setFToggle(volatile genericSensor_t* sensor);
+void _clrFToggle(volatile genericSensor_t* sensor);
+void _doFToggle(volatile genericSensor_t* sensor);
 
-bool _getBChange(genericSensor_t* sensor);
-void _setBChange(genericSensor_t* sensor);
-void _clrBChange(genericSensor_t* sensor);
-bool _getBValue(genericSensor_t* sensor);
-void _setBValue(genericSensor_t* sensor);
-void _clrBValue(genericSensor_t* sensor);
+bool _getBChange(volatile genericSensor_t* sensor);
+void _setBChange(volatile genericSensor_t* sensor);
+void _clrBChange(volatile genericSensor_t* sensor);
+bool _getBValue(volatile genericSensor_t* sensor);
+void _setBValue(volatile genericSensor_t* sensor);
+void _clrBValue(volatile genericSensor_t* sensor);
 
-uint8_t _getBStatus(genericSensor_t* sensor);
+uint8_t _getBStatus(volatile genericSensor_t* sensor);
 
 
 #endif /* NUCLEOBUTTON_H_ */

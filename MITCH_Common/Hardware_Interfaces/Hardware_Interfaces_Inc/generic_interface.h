@@ -155,7 +155,7 @@ typedef union {
 	MS5607_t MS5607;
 } Sensor_u;
 
-typedef uint8_t (*read_fun)(genericSensor_t*);
+typedef uint8_t (*read_fun)(volatile genericSensor_t*);
 
 typedef struct genericSensor {
 	SensorType_t sensorType;

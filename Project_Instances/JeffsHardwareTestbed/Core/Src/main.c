@@ -24,9 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "retarget.h"
-#include "generic_interface.h"
-#include "button.h"
-#include "LED.h"
+#include "Nucleo_Profiles.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,12 +108,8 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  RetargetInit(&huart2);
 
-  for(int i = 0; i < 500; i++) printf(" \r\n");
-    HAL_Delay(250);
-    printf("Starting:\r\n");
-    HAL_Delay(250);
+  NucleoF4_Init();
 
   /* USER CODE END 2 */
 
@@ -379,13 +374,11 @@ void r() { printf("rst\r\n"); }
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	static genericSensor_t btn;
-	btn = button_init(B1_GPIO_Port, B1_Pin);
-	button_Invert(&btn);
+	extern volatile genericSensor_t btn;
 	_doFToggle(&btn);
 
-	static LED_t LD2;
-	LD2 = LED_init(LD2_GPIO_Port, LD2_Pin);
+	extern volatile LED_t LD2;
+
 	//_setLINV(&LD2);
 	static uint32_t adc_val[2] = {0};
 
@@ -427,15 +420,15 @@ void StartDefaultTask(void const * argument)
 	 if(button_OnFToggle(&btn)) {
 		 //LED_Reset(&LD2);
 	 }
-	 adc_val[1] = HAL_ADC_GetValue(&hadc1);
-	 printf("%d %d",(int) adc_val[0], (int) adc_val[1]);
+//	 adc_val[1] = HAL_ADC_GetValue(&hadc1);
+//	 printf("%d %d",(int) adc_val[0], (int) adc_val[1]);
 
 
 
-	 printf("\r\n");
+//	 printf("\r\n");
 	 //HAL_ADC_Stop(&hadc1);
-	// PRINT_BIN_NL(_getBStatus(&btn));
-	 vTaskDelayUntil(&time_init, 1000/portTICK_RATE_MS);
+	 PRINT_BIN_NL(_getBStatus(&btn));
+	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);
   /* USER CODE END 5 */
