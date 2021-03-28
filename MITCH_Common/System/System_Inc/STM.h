@@ -11,12 +11,12 @@
 
 #include "main.h"
 #ifndef HARDWARE_EMULATOR
-#include "cmsis_os.h"
+//#include "cmsis_os.h"
 #endif
 
 
 /** Checks/Sets NO_STM_DEF Flag **/
-#if !defined(__STM32F4xx_H)
+#if !defined(STM32F4) && !defined(STM32L4)
 	#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
 	#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
 	#define READ_BIT(REG, BIT)    ((REG) & (BIT))
@@ -29,8 +29,7 @@
 	#define __NO_STM_DEF
 #endif
 /** Checks/Sets NO_STM_DEV Flag **/
-#if !defined(__STM32F411xE_H)
-	typedef uint32_t TickType_t;
+#if !defined(__STM32F4xx_HAL_GPIO_H) && !defined(STM32L4xx_HAL_GPIO_H)
 	typedef void GPIO_TypeDef;
 	typedef enum {
 	  GPIO_PIN_RESET = 0,
@@ -41,7 +40,7 @@
 #endif
 
 /** Checks/Sets NO_HAL_DEF Flag **/
-#if !defined(__STM32F4xx_HAL_DEF)
+#if !defined(__STM32F4xx_HAL_DEF) && !defined(STM32L4xx_HAL_DEF_H)
 	typedef enum {
 	  HAL_OK       = 0x00U,
 	  HAL_ERROR    = 0x01U,
@@ -54,7 +53,7 @@
 #endif
 
 /** Checks/Sets NO_HAL_SPI Flag **/
-#if !defined (STM32F4xx_HAL_SPI_H)
+#if !defined (STM32F4xx_HAL_SPI_H) && !defined(STM32L4xx_HAL_SPI_H)
 	typedef struct {
 		uint8_t bus;
 		uint8_t port;
@@ -65,12 +64,16 @@
 #endif
 
 /** Checks/Sets NO_HAL_UART Flag **/
-#if !defined  (__STM32F4xx_HAL_UART_H)
+#if !defined  (__STM32F4xx_HAL_UART_H) && !defined (STM32L4xx_HAL_UART_H)
 	typedef struct {
 
 	} UART_HandleTypeDef;
 
 	#define __NO_HAL_UART
+#endif
+
+#ifndef PORTMACRO_H
+	typedef uint32_t TickType_t;
 #endif
 
 #endif /* SYSTEM_SYSTEM_INC_STM_H_ */

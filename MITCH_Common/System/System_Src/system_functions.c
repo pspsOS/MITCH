@@ -37,7 +37,7 @@ uint32_t getTimeStamp(void) {
  * @date 12/28/2020
  */
 void retryTakeDelay(TickType_t length) {
-#ifndef HARDWARE_EMULATOR
+#ifdef INC_TASK_H
 	vTaskDelay(length);
 #endif
 }

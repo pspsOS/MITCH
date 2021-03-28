@@ -22,7 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "generic_interface.h"
+#include "MT3339.h"
+#include "MS5607.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
