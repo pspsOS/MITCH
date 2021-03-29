@@ -53,7 +53,7 @@ osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[ 128 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 /* USER CODE BEGIN PV */
-volatile genericDevice_t gps;
+volatile genericSensor_t gps;
 uint8_t temporary;
 /* USER CODE END PV */
 
