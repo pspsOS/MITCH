@@ -40,6 +40,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c3;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -50,6 +52,7 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_I2C3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -88,10 +91,18 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
   NucleoL4_Init();
 
   extern volatile LED_t LD3;
+
+  uint8_t data;
+  HAL_StatusTypeDef s;
+//  printf("%d\r\n",hi2c3.);
+//  printf("%x",hi2c3.State);
+//  s = HAL_I2C_Slave_Receive(&hi2c3, &data, 1, HAL_MAX_DELAY);
+//  printf("%x",hi2c3.State);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,14 +112,32 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  for(int i = 10; i >=1; i--) {
-		  LED_Reset(&LD3);
-		  HAL_Delay(50*i);
-		  LED_Set(&LD3);
-		  HAL_Delay(50*i);
-		  printf(".");
+	  s = HAL_I2C_Slave_Receive(&hi2c3, &data, 1, HAL_MAX_DELAY);
+	  switch(s) {
+	  case HAL_OK:
+		  printf("%c",(char) data);
+		  break;
+	  case HAL_ERROR:
+		  printf("HAL_ERROR\r\n");
+		  break;
+	  case HAL_BUSY:
+		  printf("HAL_BUSY\r\n");
+		  break;
+	  case HAL_TIMEOUT:
+		  printf("HAL_TIMEOUT");
+		  break;
 	  }
-	  printf("\r\n");
+
+	  LED_SetState(&LD3,!LED_GetState(&LD3));
+
+//	  for(int i = 10; i >=1; i--) {
+//		  LED_Reset(&LD3);
+//		  HAL_Delay(50*i);
+//		  LED_Set(&LD3);
+//		  HAL_Delay(50*i);
+//		  printf(".");
+//	  }
+//	  printf("\r\n");
 
   }
   /* USER CODE END 3 */
@@ -149,8 +178,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_I2C3;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  PeriphClkInit.I2c3ClockSelection = RCC_I2C3CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -161,6 +191,52 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C3_Init(void)
+{
+
+  /* USER CODE BEGIN I2C3_Init 0 */
+
+  /* USER CODE END I2C3_Init 0 */
+
+  /* USER CODE BEGIN I2C3_Init 1 */
+
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.Timing = 0x00000E14;
+  hi2c3.Init.OwnAddress1 = 24;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Analogue filter
+  */
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c3, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Digital filter
+  */
+  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c3, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C3_Init 2 */
+
+  /* USER CODE END I2C3_Init 2 */
+
 }
 
 /**
