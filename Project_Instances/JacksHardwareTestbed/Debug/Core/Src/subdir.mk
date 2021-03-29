@@ -6,7 +6,6 @@
 C_SRCS += \
 ../Core/Src/freertos.c \
 ../Core/Src/main.c \
-../Core/Src/retarget.c \
 ../Core/Src/stm32f4xx_hal_msp.c \
 ../Core/Src/stm32f4xx_it.c \
 ../Core/Src/sysmem.c \
@@ -15,7 +14,6 @@ C_SRCS += \
 OBJS += \
 ./Core/Src/freertos.o \
 ./Core/Src/main.o \
-./Core/Src/retarget.o \
 ./Core/Src/stm32f4xx_hal_msp.o \
 ./Core/Src/stm32f4xx_it.o \
 ./Core/Src/sysmem.o \
@@ -24,7 +22,6 @@ OBJS += \
 C_DEPS += \
 ./Core/Src/freertos.d \
 ./Core/Src/main.d \
-./Core/Src/retarget.d \
 ./Core/Src/stm32f4xx_hal_msp.d \
 ./Core/Src/stm32f4xx_it.d \
 ./Core/Src/sysmem.d \
@@ -36,8 +33,6 @@ Core/Src/freertos.o: ../Core/Src/freertos.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Software/Acquisition/Acquisition_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/System/System_Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/freertos.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/main.o: ../Core/Src/main.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Software/Acquisition/Acquisition_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/System/System_Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Core/Src/retarget.o: ../Core/Src/retarget.c
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Software/Acquisition/Acquisition_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/System/System_Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/retarget.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/Software/Acquisition/Acquisition_Inc" -I"/Users/jackwiley/Documents/GitHub/MITCH/MITCH_Common/System/System_Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f4xx_hal_msp.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/stm32f4xx_it.o: ../Core/Src/stm32f4xx_it.c
