@@ -99,6 +99,8 @@ int main(void)
 
   uint8_t data;
   HAL_StatusTypeDef s;
+
+  __HAL_I2C_ENABLE_IT(&hi2c3,I2C_IT_TCI);
 //  printf("%d\r\n",hi2c3.);
 //  printf("%x",hi2c3.State);
 //  s = HAL_I2C_Slave_Receive(&hi2c3, &data, 1, HAL_MAX_DELAY);
@@ -112,10 +114,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  s = HAL_I2C_Slave_Receive(&hi2c3, &data, 1, HAL_MAX_DELAY);
+	  s = HAL_I2C_Slave_Receive_IT(&hi2c3, &data, 1);
+	  HAL_Delay(1000);
 	  switch(s) {
 	  case HAL_OK:
 		  printf("%c",(char) data);
+		  LED_SetState(&LD3,!LED_GetState(&LD3));
 		  break;
 	  case HAL_ERROR:
 		  printf("HAL_ERROR\r\n");
@@ -128,7 +132,8 @@ int main(void)
 		  break;
 	  }
 
-	  LED_SetState(&LD3,!LED_GetState(&LD3));
+
+//	  LED_SetState(&LD3,!LED_GetState(&LD3));
 
 //	  for(int i = 10; i >=1; i--) {
 //		  LED_Reset(&LD3);
