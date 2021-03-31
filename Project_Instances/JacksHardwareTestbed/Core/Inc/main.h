@@ -61,7 +61,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 /** System Flags **/
-
+#define DO_RETARGET
 
 /** Task Rates **/
 // Acquisition Rates Multiplier Settings

@@ -82,7 +82,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 
 	//lock structure
 	while(g_gpsData->lock)
-	#ifndef HARDWARE_EMULATOR
+	#ifdef DEFAULT_TAKE_DELAY
 		retryTakeDelay(DEFAULT_TAKE_DELAY);
 	#else
 		break;
@@ -173,7 +173,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 			g_gpsData->lock = false;
 			__printGpsData();
 			do {
-			#ifndef HARDWARE_EMULATOR
+			#ifdef DEFAULT_TAKE_DELAY
 				retryTakeDelay(DEFAULT_TAKE_DELAY);
 			#else
 				g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
@@ -182,7 +182,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 
 			//relock
 			while(g_gpsData->lock)
-			#ifndef HARDWARE_EMULATOR
+			#ifdef DEFAULT_TAKE_DELAY
 				retryTakeDelay(DEFAULT_TAKE_DELAY);
 			#else
 				break;
@@ -246,7 +246,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 				g_gpsData->lock = false;
 				__printGpsData();
 				do {
-				#ifndef HARDWARE_EMULATOR
+				#ifdef DEFAULT_TAKE_DELAY
 					retryTakeDelay(DEFAULT_TAKE_DELAY);
 				#else
 					g_gpsData->hasUpdate = false; // Breaks infinite loop if run in testbed
@@ -255,7 +255,7 @@ void gpsRead_A(gpsData_t* g_gpsData) {
 
 				//relock
 				while(g_gpsData->lock)
-				#ifndef HARDWARE_EMULATOR
+				#ifdef DEFAULT_TAKE_DELAY
 					retryTakeDelay(DEFAULT_TAKE_DELAY);
 				#else
 					break;

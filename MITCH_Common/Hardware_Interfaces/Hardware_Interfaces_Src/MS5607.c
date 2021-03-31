@@ -7,7 +7,7 @@
 
 #include "MS5607.h"
 
-genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin) {
+volatile genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin) {
 	/** Define MS5607 Struct **/
 	MS5607_t _bmp = {0};
 	genericSensor_t gBMP = {0};
@@ -78,9 +78,9 @@ genericSensor_t MS5607_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t
 	return gBMP;
 }
 
-uint8_t MS5607_read(genericSensor_t* sensor) {
+uint8_t MS5607_read(volatile genericSensor_t* sensor) {
 	while(sensor->lock)
-	#ifndef HARDWARE_EMULATOR
+	#ifdef DEFAULT_TAKE_DELAY
 		retryTakeDelay(DEFAULT_TAKE_DELAY);
 	#else
 		break;
@@ -88,7 +88,7 @@ uint8_t MS5607_read(genericSensor_t* sensor) {
 	sensor->lock = true;
 
 #ifndef __NO_HAL_SPI
-	MS5607_t* bmp = &(sensor->sensor.MS5607);
+	volatile MS5607_t* bmp = &(sensor->sensor.MS5607);
 	uint8_t dataIn[2]; // Buffer to load data received
 	uint8_t cmd;       // Command sent to sensor
 	SPI_t* SPI = &(sensor->interface.SPI);

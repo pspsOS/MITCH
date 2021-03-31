@@ -30,7 +30,7 @@ genericSensor_t button_init(GPIO_TypeDef *port, uint16_t pin) {
 }
 
 
-uint8_t button_read(genericSensor_t* sensor) {
+uint8_t button_read(volatile genericSensor_t* sensor) {
 	bool prevValue = _getBValue(sensor);
 	bool value = prevValue;
 
@@ -54,8 +54,8 @@ uint8_t button_read(genericSensor_t* sensor) {
 	return (uint8_t) value;
 }
 
-ButtonState_t button_GetState(genericSensor_t* sensor) {
-	button_t* btn = &(sensor->sensor.button);
+ButtonState_t button_GetState(volatile genericSensor_t* sensor) {
+	volatile button_t* btn = &(sensor->sensor.button);
 	switch(btn->status & _BUTTON_STATE_MASK) {
 	case 0b00:
 		return BUTTON_RESET;
@@ -74,93 +74,97 @@ ButtonState_t button_GetState(genericSensor_t* sensor) {
 	}
 }
 
-bool button_OnSet(genericSensor_t* sensor) {
+void button_Invert(volatile genericSensor_t* sensor) {
+	_getBINV(sensor) ? _clrBINV(sensor) : _setBINV(sensor);
+}
+
+bool button_OnSet(volatile genericSensor_t* sensor) {
 	return _getBValue(sensor);
 }
-bool button_OnReset(genericSensor_t* sensor) {
+bool button_OnReset(volatile genericSensor_t* sensor) {
 	return !_getBValue(sensor);
 }
-bool button_OnRising(genericSensor_t* sensor) {
+bool button_OnRising(volatile genericSensor_t* sensor) {
 	return _getBValue(sensor) && _getBChange(sensor);
 }
-bool button_OnFalling(genericSensor_t* sensor) {
+bool button_OnFalling(volatile genericSensor_t* sensor) {
 	return !_getBValue(sensor) && _getBChange(sensor);
 }
-bool button_OnRToggle(genericSensor_t* sensor) {
+bool button_OnRToggle(volatile genericSensor_t* sensor) {
 	return button_OnRising(sensor) && _getRToggle(sensor);
 }
-bool button_OnFToggle(genericSensor_t* sensor) {
+bool button_OnFToggle(volatile genericSensor_t* sensor) {
 	return button_OnFalling(sensor) && _getFToggle(sensor);
 }
 
 
 // INV
-bool _getBINV(genericSensor_t* sensor) {
+bool _getBINV(volatile genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_INV_MASK);
 }
-void _setBINV(genericSensor_t* sensor) {
+void _setBINV(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_INV_MASK;
 }
-void _clrBINV(genericSensor_t* sensor) {
+void _clrBINV(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_INV_MASK);
 }
 
 
 // Button Rising Toggle
-bool _getRToggle(genericSensor_t* sensor) {
+bool _getRToggle(volatile genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_RTOGGLE_MASK);
 }
-void _setRToggle(genericSensor_t* sensor) {
+void _setRToggle(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_RTOGGLE_MASK;
 }
-void _clrRToggle(genericSensor_t* sensor) {
+void _clrRToggle(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_RTOGGLE_MASK);
 }
-void _doRToggle(genericSensor_t* sensor) {
+void _doRToggle(volatile genericSensor_t* sensor) {
 	(_getRToggle(sensor)) ? (_clrRToggle(sensor)) : (_setRToggle(sensor));
 }
 
 
 // Button Falling Toggle
-bool _getFToggle(genericSensor_t* sensor) {
+bool _getFToggle(volatile genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_FTOGGLE_MASK);
 }
-void _setFToggle(genericSensor_t* sensor) {
+void _setFToggle(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_FTOGGLE_MASK;
 }
 
-void _clrFToggle(genericSensor_t* sensor) {
+void _clrFToggle(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_FTOGGLE_MASK);
 }
-void _doFToggle(genericSensor_t* sensor) {
+void _doFToggle(volatile genericSensor_t* sensor) {
 	(_getFToggle(sensor)) ? (_clrFToggle(sensor)) : (_setFToggle(sensor));
 }
 
 // Button Change
-bool _getBChange(genericSensor_t* sensor) {
+bool _getBChange(volatile genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_CHANGE_MASK);
 }
-void _setBChange(genericSensor_t* sensor) {
+void _setBChange(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_CHANGE_MASK;
 }
 
-void _clrBChange(genericSensor_t* sensor) {
+void _clrBChange(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_CHANGE_MASK);
 }
 
 // Button Value
-bool _getBValue(genericSensor_t* sensor) {
+bool _getBValue(volatile genericSensor_t* sensor) {
 	return EVAL(sensor->sensor.button.status & _BUTTON_VALUE_MASK);
 }
-void _setBValue(genericSensor_t* sensor) {
+void _setBValue(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status |= _BUTTON_VALUE_MASK;
 }
 
-void _clrBValue(genericSensor_t* sensor) {
+void _clrBValue(volatile genericSensor_t* sensor) {
 	sensor->sensor.button.status &= INV(_BUTTON_VALUE_MASK);
 }
 
-uint8_t _getBStatus(genericSensor_t* sensor) {
+uint8_t _getBStatus(volatile genericSensor_t* sensor) {
 	return sensor->sensor.button.status;
 }
 

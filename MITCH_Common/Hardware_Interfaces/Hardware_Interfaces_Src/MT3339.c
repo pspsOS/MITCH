@@ -3,7 +3,7 @@
 #include "MT3339.h"
 #include <string.h>
 
-genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
+volatile genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 	/** Define MT3339 Struct **/
 	MT3339_t _gps = {0};
 
@@ -48,13 +48,13 @@ genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 	return gGPS;
 }
 
-uint8_t MT3339_read(genericSensor_t* sensor) {
-	MT3339_t* gps = &(sensor->sensor.MT3339);
+uint8_t MT3339_read(volatile genericSensor_t* sensor) {
+	volatile MT3339_t* gps = &(sensor->sensor.MT3339);
 
 	 if ( !parse(lastNMEA()) ) {
 		 return (uint8_t) sensor->state;
 	 }
-	 strncpy(gps->gpsString,lastNMEA(),MAX_NMEA);
+	 strncpy((char*)gps->gpsString,lastNMEA(),MAX_NMEA);
 
 
 	return (uint8_t) sensor->state;
