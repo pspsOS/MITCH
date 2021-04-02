@@ -34,8 +34,17 @@ typedef struct VLQ {
 #define NOMINAL_IMU_DATA (0xB0)
 #define NOMINAL_MONITOR_DATA (0xC0)
 #define NOMINAL_PROCESSED_DATA (0xD0)
+#define NOMINAL_ALA_DATA (0xE0)
 
 #define FAILED_FILE_WRITE (-1)
 #define SUCCESSFUL_FILE_WRITE (0)
+
+
+/* Function */
+
+VLQ_t convertToUVLQ(uint32_t );
+VLQ_t convertToSVLQ(int32_t );
+int8_t writeToStorage(uint8_t *, uint8_t );
+
 
 #endif /* SYSTEM_SYSTEM_INC_GENERIC_STORAGE_H_ */

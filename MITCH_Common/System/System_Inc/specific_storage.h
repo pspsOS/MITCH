@@ -8,6 +8,12 @@
 #ifndef SYSTEM_SYSTEM_INC_SPECIFIC_STORAGE_H_
 #define SYSTEM_SYSTEM_INC_SPECIFIC_STORAGE_H_
 
-void store
+#include "generic_storage.h"
+
+
+/* Function */
+
+void storeBmpData(bmpData_t * );
+void storeAlaData(alaData_t * );
 
 #endif /* SYSTEM_SYSTEM_INC_SPECIFIC_STORAGE_H_ */

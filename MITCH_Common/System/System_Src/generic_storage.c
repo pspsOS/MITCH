@@ -116,11 +116,22 @@ VLQ_t convertToSVLQ(int32_t originalNum) {
 int8_t writeToStorage(uint8_t *bytePointer, uint8_t streamSize){
 #ifndef NDEBUG
 	FILE *fp = NULL;
-	fp = fopen("output.txt","a");
+	// Binary
+	fp = fopen("output_binary.txt","a");
 	if (fp == NULL) {
 		return FAILED_FILE_WRITE;
 	}
 	fwrite(bytePointer, sizeof(uint8_t), streamSize, fp);
+	fclose(fp);
+	fp = NULL;
+	// Hex
+	fp = fopen("output_hex.txt", "a");
+	if (fp == NULL) {
+		return FAILED_FILE_WRITE;
+	}
+	for (int i = 0; i < streamSize; i++) {
+		fprintf(fp, "%X", bytePointer[i]);
+	}
 	fclose(fp);
 	fp = NULL;
 #endif
