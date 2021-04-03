@@ -21,7 +21,7 @@ volatile genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 
 	HAL_Delay(10);
 	//printf("\nthe size is: %d\n",sizeof(trans));
-	HAL_UART_Receive_IT(huart, &temporary, 1);
+	//HAL_UART_Receive(huart, &temporary, 1, HAL_MAX_DELAY);
 	HAL_Delay(10);
 
 	Adafruit_GPS(*huart);
@@ -62,14 +62,14 @@ uint8_t MT3339_read(volatile genericSensor_t* sensor) {
 }
 
 
-HAL_StatusTypeDef MT3339_receive(genericSensor_t* sensor,uint8_t* buffer) {
+HAL_StatusTypeDef MT3339_receive(volatile genericSensor_t* sensor,uint8_t* buffer) {
 #ifndef __NO_HAL_UART
 	//MT3339_t* gps = &(sensor->sensor.MT3339);
 	UART_HandleTypeDef* huart = sensor->interface.UART.huart;
 	 // Buffer to load data received
 	if (huart->Instance == sensor->interface.UART.huart->Instance)  {
 			//printf("hi");
-			HAL_UART_Receive_IT(huart,buffer, 1);
+			HAL_UART_Receive(huart,buffer, 1, HAL_MAX_DELAY);
 			read(*buffer);
 	}
 #endif

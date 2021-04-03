@@ -185,4 +185,5 @@ HAL_StatusTypeDef receiveSPI(genericSensor_t* sensor, uint8_t* cmd, int cmdlen, 
 HAL_StatusTypeDef interfaceLock(InterfaceLock_t* lock, uint32_t retryDelay, uint32_t timeout);
 HAL_StatusTypeDef interfaceUnlock(InterfaceLock_t* lock, genericSensor_t* sensor);
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_GENERIC_INTERFACE_H_ */

@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "retarget.h"
 #include "Nucleo_Profiles.h"
+#include "MT3339.h"
 
 /* USER CODE END Includes */
 
@@ -46,6 +47,7 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 osThreadId myTask01Handle;
@@ -55,7 +57,7 @@ osThreadId myTask02Handle;
 uint32_t myTask02Buffer[ 128 ];
 osStaticThreadDef_t myTask02ControlBlock;
 /* USER CODE BEGIN PV */
-
+//extern void HAL_UART_RxCpltCallback(UART_HandleTypeDef*);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,6 +66,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
 void StartTask02(void const * argument);
 
@@ -73,7 +76,23 @@ void StartTask02(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+volatile genericSensor_t gps;
+uint8_t temporary;
+//TODO: Make UART Callback Generic
+/*
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	printf("Callback\r\n");
+	#ifndef __NO_HAL_UART
+	MT3339_receive(&gps,&temporary);
+	if ( newNMEAreceived() ) {
+		if ( !parse(lastNMEA()) ) {
+			return;
+		}
+		printf("%s\n\r", lastNMEA());
+	}
+	#endif
+}
+*/
 /* USER CODE END 0 */
 
 /**
@@ -107,9 +126,21 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_USART2_UART_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   NucleoF4_Init();
+ /*
+
+
+
+  HAL_Delay(1000);
+*/
+  //gps.read(&gps);
+  //printf("%s\r\n",statusStr(HAL_UART_Receive(&huart1,gpsStr,50,1000)));
+//  printf("%s\r\n",&(gps.sensor.MT3339.gpsString[0]));
+//  printf("End");
+
 
   /* USER CODE END 2 */
 
@@ -279,6 +310,39 @@ static void MX_ADC1_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 9600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -379,47 +443,51 @@ void StartDefaultTask(void const * argument)
 
 	extern volatile LED_t LD2;
 
+
+	//gps = MT3339_init(&huart1);
+
 	//_setLINV(&LD2);
-	static uint32_t adc_val[2] = {0};
+	//static uint32_t adc_val[2] = {0};
 
 	static TickType_t time_init = 0;
-
+	uint8_t buffer[100];
 
 	 //HAL_ADCEx_InjectedStart(&hadc1);
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
-	 HAL_ADC_Start(&hadc1);
-	 HAL_ADC_PollForConversion(&hadc1, 1000);
-	 adc_val[0] = HAL_ADC_GetValue(&hadc1);
+	 //HAL_ADC_Start(&hadc1);
+	 //HAL_ADC_PollForConversion(&hadc1, 1000);
+	 //adc_val[0] = HAL_ADC_GetValue(&hadc1);
 
-	 HAL_ADC_Stop(&hadc1);
-	 if(button_OnSet(&btn)) {
-		 //s();
-	 }
-
-	 if(button_OnReset(&btn)) {
-		 //r();
-	 }
+	 //HAL_ADC_Stop(&hadc1);
+//	 if(button_OnSet(&btn)) {
+//		 //s();
+//	 }
+//
+//	 if(button_OnReset(&btn)) {
+//		 //r();
+//	 }
 
 	 if(button_OnRising(&btn)) {
 		 LED_SetState(&LD2, !LED_GetState(&LD2));
+		 //HAL_UART_Receive(&huart1,buffer, 100, HAL_MAX_DELAY);
 
-
+		// printf("%s\r\n",(char*)buffer);
 
 	 }
-
+//
 	 if(button_OnFalling(&btn)) {
 		 LED_Reset(&LD2);
 	 }
-
-	 if(button_OnRToggle(&btn)) {
-		 //LED_Set(&LD2);
-	 }
-
-	 if(button_OnFToggle(&btn)) {
-		 //LED_Reset(&LD2);
-	 }
+//
+//	 if(button_OnRToggle(&btn)) {
+//		 //LED_Set(&LD2);
+//	 }
+//
+//	 if(button_OnFToggle(&btn)) {
+//		 //LED_Reset(&LD2);
+//	 }
 //	 adc_val[1] = HAL_ADC_GetValue(&hadc1);
 //	 printf("%d %d",(int) adc_val[0], (int) adc_val[1]);
 
@@ -427,7 +495,7 @@ void StartDefaultTask(void const * argument)
 
 //	 printf("\r\n");
 	 //HAL_ADC_Stop(&hadc1);
-	 PRINT_BIN_NL(_getBStatus(&btn));
+	 //PRINT_BIN_NL(_getBStatus(&btn));
 	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
  }
   vTaskDelete(NULL);
@@ -435,6 +503,11 @@ void StartDefaultTask(void const * argument)
 }
 
 /* USER CODE BEGIN Header_StartTask02 */
+static uint8_t c[100] = {0};
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	printf("%s\r\n",(char*)c);
+	printf("d");
+}
 /**
 * @brief Function implementing the myTask02 thread.
 * @param argument: Not used
@@ -444,10 +517,15 @@ void StartDefaultTask(void const * argument)
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
+	static TickType_t time_init = 0;
+
+	HAL_UART_Receive_IT(&huart1,c, 100);
   /* Infinite loop */
-  for(;;)
-  {
-    break;
+  while(0) {
+	  //printf("%s\r\n",statusStr());
+	  //if((char)c == '%') printf("\r\n");
+
+	  vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
   }
   vTaskDelete(NULL);
   /* USER CODE END StartTask02 */

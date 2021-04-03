@@ -232,8 +232,8 @@ void common_init(void) {
 
 
 void sendCommand(UART_HandleTypeDef huart, char *str) {
-  printf("%s\n",str);
-	printf("%d\n", (uint16_t) strlen(str));
+  printf("%s\n\r",str);
+	//printf("%d\n\r", (uint16_t) strlen(str));
 #ifndef __NO_HAL_UART
 	HAL_UART_Transmit(&huart, (uint8_t *)str, (uint16_t) sizeof(str),100);
 	HAL_Delay(50);
