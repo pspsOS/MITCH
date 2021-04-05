@@ -12,9 +12,6 @@ RM := rm -rf
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
--include MITCH_Common/System/System_Src/subdir.mk
--include MITCH_Common/Software/Acquisition/Acquisition_Src/subdir.mk
--include MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
@@ -61,8 +58,8 @@ all: main-build
 main-build: Jacks\ Hardware\ Tesbed.elf secondary-outputs
 
 # Tool invocations
-Jacks\ Hardware\ Tesbed.elf: $(OBJS) $(USER_OBJS) /Users/jackwiley/Documents/GitHub/MITCH/Project_Instances/JacksHardwareTestbed/STM32F411RETX_FLASH.ld
-	arm-none-eabi-gcc -o "Jacks Hardware Tesbed.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/jackwiley/Documents/GitHub/MITCH/Project_Instances/JacksHardwareTestbed/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Jacks Hardware Tesbed.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Jacks\ Hardware\ Tesbed.elf: $(OBJS) $(USER_OBJS) C:\Users\Jeff\Documents\GitHub\MITCH\Project_Instances\JacksHardwareTestbed\STM32F411RETX_FLASH.ld
+	arm-none-eabi-gcc -o "Jacks Hardware Tesbed.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Jeff\Documents\GitHub\MITCH\Project_Instances\JacksHardwareTestbed\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Jacks Hardware Tesbed.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

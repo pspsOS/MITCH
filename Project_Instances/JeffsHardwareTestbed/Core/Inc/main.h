@@ -60,16 +60,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
-#define ADC1_Pin GPIO_PIN_0
-#define ADC1_GPIO_Port GPIOA
-#define ADC2_Pin GPIO_PIN_1
-#define ADC2_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
-#define ADCI1_Pin GPIO_PIN_6
-#define ADCI1_GPIO_Port GPIOA
-#define ADCI2_Pin GPIO_PIN_7
-#define ADCI2_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 #define DO_RETARGET

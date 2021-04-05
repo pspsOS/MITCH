@@ -44,11 +44,9 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
-DMA_HandleTypeDef hdma_adc1;
-
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 osThreadId myTask01Handle;
 uint32_t myTask01Buffer[ 128 ];
@@ -64,7 +62,6 @@ osStaticThreadDef_t myTask02ControlBlock;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_ADC1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
@@ -76,8 +73,7 @@ void StartTask02(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile genericSensor_t gps;
-uint8_t temporary;
+
 //TODO: Make UART Callback Generic
 /*
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
@@ -93,6 +89,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	#endif
 }
 */
+
 /* USER CODE END 0 */
 
 /**
@@ -124,7 +121,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
@@ -228,88 +224,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief ADC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ADC1_Init(void)
-{
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
-  ADC_InjectionConfTypeDef sConfigInjected = {0};
-
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
-  */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = ENABLE;
-  hadc1.Init.ContinuousConvMode = ENABLE;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 2;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_1;
-  sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configures for the selected ADC injected channel its corresponding rank in the sequencer and its sample time
-  */
-  sConfigInjected.InjectedChannel = ADC_CHANNEL_6;
-  sConfigInjected.InjectedRank = 1;
-  sConfigInjected.InjectedNbrOfConversion = 2;
-  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_3CYCLES;
-  sConfigInjected.ExternalTrigInjecConvEdge = ADC_EXTERNALTRIGINJECCONVEDGE_NONE;
-  sConfigInjected.ExternalTrigInjecConv = ADC_INJECTED_SOFTWARE_START;
-  sConfigInjected.AutoInjectedConv = DISABLE;
-  sConfigInjected.InjectedDiscontinuousConvMode = DISABLE;
-  sConfigInjected.InjectedOffset = 0;
-  if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configures for the selected ADC injected channel its corresponding rank in the sequencer and its sample time
-  */
-  sConfigInjected.InjectedChannel = ADC_CHANNEL_7;
-  sConfigInjected.InjectedRank = 2;
-  if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -385,9 +299,9 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA2_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+  /* DMA2_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 
 }
 
@@ -450,24 +364,11 @@ void StartDefaultTask(void const * argument)
 	//static uint32_t adc_val[2] = {0};
 
 	static TickType_t time_init = 0;
-	uint8_t buffer[100];
 
 	 //HAL_ADCEx_InjectedStart(&hadc1);
   /* Infinite loop */
  while(true) {
 	 btn.read(&btn);
-	 //HAL_ADC_Start(&hadc1);
-	 //HAL_ADC_PollForConversion(&hadc1, 1000);
-	 //adc_val[0] = HAL_ADC_GetValue(&hadc1);
-
-	 //HAL_ADC_Stop(&hadc1);
-//	 if(button_OnSet(&btn)) {
-//		 //s();
-//	 }
-//
-//	 if(button_OnReset(&btn)) {
-//		 //r();
-//	 }
 
 	 if(button_OnRising(&btn)) {
 		 LED_SetState(&LD2, !LED_GetState(&LD2));
@@ -503,10 +404,19 @@ void StartDefaultTask(void const * argument)
 }
 
 /* USER CODE BEGIN Header_StartTask02 */
-static uint8_t c[100] = {0};
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	printf("%s\r\n",(char*)c);
-	printf("d");
+//static uint8_t c[100] = {0};
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+//	printf("%s\r\n",(char*)c);
+//	printf("d");
+//}
+uint8_t gar[MAX_NMEA] = {0};
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+	for(int i = 0; i < MAX_NMEA; i++) {
+		if((char)gar[i] == '$') printf("\r\n");
+		if(gar[i]) printf("%c", (char)gar[i]);
+		else break;
+	}
+	printf("%s",(char*)gar);
 }
 /**
 * @brief Function implementing the myTask02 thread.
@@ -519,12 +429,20 @@ void StartTask02(void const * argument)
   /* USER CODE BEGIN StartTask02 */
 	static TickType_t time_init = 0;
 
-	HAL_UART_Receive_IT(&huart1,c, 100);
-  /* Infinite loop */
-  while(0) {
-	  //printf("%s\r\n",statusStr());
-	  //if((char)c == '%') printf("\r\n");
+	volatile genericSensor_t gps;
+	//gps = MT3339_init(&huart1);
+	uint8_t cmd[MAX_NMEA] = "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28";
+	printf("%s\r\n",statusStr(HAL_UART_Transmit(&huart1,cmd,sizeof(cmd),HAL_MAX_DELAY)));
+	HAL_Delay(5000);
 
+  /* Infinite loop */
+  while(1) {
+	  HAL_UART_Receive_DMA(&huart1, gar, MAX_NMEA);
+
+	  if(newGps) {
+		 printf("%s",(char*)gar);
+		  newGps = false;
+	  }
 	  vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
   }
   vTaskDelete(NULL);

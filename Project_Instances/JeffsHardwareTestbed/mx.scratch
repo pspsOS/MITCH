@@ -14,7 +14,14 @@
       <ProjectName>Jeffs Hardware Testbed</ProjectName>
       <ProjectNature>C</ProjectNature>
       <Secure />
-      <filestoremove />
+      <filestoremove>
+        <file>
+          <name>Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</name>
+        </file>
+        <file>
+          <name>Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</name>
+        </file>
+      </filestoremove>
       <sourceEntriesToRemove>
         <sourceEntry />
       </sourceEntriesToRemove>

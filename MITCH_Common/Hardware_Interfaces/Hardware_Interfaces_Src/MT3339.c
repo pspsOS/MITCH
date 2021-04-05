@@ -19,29 +19,29 @@ volatile genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 	uint8_t temporary; // Buffer to load data received
 
 
-	HAL_Delay(10);
-	//printf("\nthe size is: %d\n",sizeof(trans));
-	//HAL_UART_Receive(huart, &temporary, 1, HAL_MAX_DELAY);
-	HAL_Delay(10);
-
-	Adafruit_GPS(*huart);
-
-	HAL_Delay(10);
-
-	sendCommand(*huart, PMTK_SET_BAUD_9600);
-	HAL_Delay(10);
-	sendCommand(*huart, PMTK_SET_NMEA_OUTPUT_RMCGGA);
-	HAL_Delay(10);
-	//sendCommand(huart2, PMTK_SET_NMEA_UPDATE_10HZ);
-	sendCommand(*huart, PMTK_API_SET_FIX_CTL_5HZ);
-
-	HAL_Delay(10);
-	sendCommand(*huart, PGCMD_ANTENNA);
-	HAL_Delay(10);
-
-	//printf(PMTK_Q_RELEASE);
-	//printf("Connection established at 9600 baud...\n");
-	HAL_Delay(1);
+//	HAL_Delay(10);
+//	//printf("\nthe size is: %d\n",sizeof(trans));
+//	//HAL_UART_Receive(huart, &temporary, 1, HAL_MAX_DELAY);
+//	HAL_Delay(10);
+//
+//	Adafruit_GPS(*huart);
+//
+//	HAL_Delay(10);
+//
+//	sendCommand(*huart, PMTK_SET_BAUD_9600);
+//	HAL_Delay(10);
+//	sendCommand(*huart, PMTK_SET_NMEA_OUTPUT_RMCGGA);
+//	HAL_Delay(10);
+//	sendCommand(huart2, PMTK_SET_NMEA_UPDATE_10HZ);
+//	sendCommand(*huart, PMTK_API_SET_FIX_CTL_5HZ);
+//
+//	HAL_Delay(10);
+//	sendCommand(*huart, PGCMD_ANTENNA);
+//	HAL_Delay(10);
+//
+//	printf(PMTK_Q_RELEASE);
+//	printf("Connection established at 9600 baud...\n");
+//	HAL_Delay(1);
 #endif
 
 
