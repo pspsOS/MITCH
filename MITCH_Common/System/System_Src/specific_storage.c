@@ -102,8 +102,8 @@ void storeBmpData(bmpData_t *dataToStore) {
 
 
 /**
- * @brief stores BMP data
- * Stores values from the bmpData Struct
+ * @brief stores ALA data
+ * Stores values from the alaData Struct
  *
  * @author Ryan Horvath, Vishnu Vijay
  * @date 1/30/21
