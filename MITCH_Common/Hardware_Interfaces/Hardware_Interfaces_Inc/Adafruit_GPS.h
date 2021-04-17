@@ -31,23 +31,23 @@ All text above must be included in any redistribution
 
 
 // different commands to set the update rate from once a second (1 Hz) to 10 times a second (10Hz)
-#define PMTK_SET_NMEA_UPDATE_1HZ  "$PMTK220,1000*1F"
-#define PMTK_SET_NMEA_UPDATE_5HZ  "$PMTK220,200*2C"
-#define PMTK_SET_NMEA_UPDATE_10HZ "$PMTK220,100*2F"
+#define PMTK_SET_NMEA_UPDATE_1HZ  "$PMTK220,1000*1F\r\n"
+#define PMTK_SET_NMEA_UPDATE_5HZ  "$PMTK220,200*2C\r\n"
+#define PMTK_SET_NMEA_UPDATE_10HZ "$PMTK220,100*2F\r\n"
 
-#define PMTK_API_SET_FIX_CTL_5HZ  "$PMTK300,200,0,0,0,0*2F"
+#define PMTK_API_SET_FIX_CTL_5HZ  "$PMTK300,200,0,0,0,0*2F\r\n"
 
-#define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C"
-#define PMTK_SET_BAUD_9600 "$PMTK251,9600*17"
+#define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C\r\n"
+#define PMTK_SET_BAUD_9600 "$PMTK251,9600*17\r\n"
 
 // turn on only the second sentence (GPRMC)
-#define PMTK_SET_NMEA_OUTPUT_RMCONLY "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29"
+#define PMTK_SET_NMEA_OUTPUT_RMCONLY "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n"
 // turn on GPRMC and GGA
-#define PMTK_SET_NMEA_OUTPUT_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28"
+#define PMTK_SET_NMEA_OUTPUT_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"
 // turn on ALL THE DATA
-#define PMTK_SET_NMEA_OUTPUT_ALLDATA "$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28"
+#define PMTK_SET_NMEA_OUTPUT_ALLDATA "$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"
 // turn off output
-#define PMTK_SET_NMEA_OUTPUT_OFF "$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28"
+#define PMTK_SET_NMEA_OUTPUT_OFF "$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"
 
 // to generate your own sentences, check out the MTK command datasheet and use a checksum calculator
 // such as the awesome http://www.hhhh.org/wiml/proj/nmeaxor.html
@@ -78,7 +78,7 @@ void Adafruit_GPS(UART_HandleTypeDef);
 char *lastNMEA(void);
 bool newNMEAreceived();
 void common_init(void);
-void sendCommand(UART_HandleTypeDef, char *);
+void sendCommand(UART_HandleTypeDef*, char *);
 void pause(bool b);
 
 bool parseNMEA(char *response);
@@ -88,12 +88,12 @@ char read(uint8_t);
 bool parse(char * nmea);
 void interruptReads(bool r);
 
-bool wakeup(UART_HandleTypeDef);
-bool standby(UART_HandleTypeDef);
+bool wakeup(UART_HandleTypeDef*);
+bool standby(UART_HandleTypeDef*);
 
 bool waitForSentence(char *wait, uint8_t max);
-bool LOCUS_StartLogger(UART_HandleTypeDef);
-bool LOCUS_ReadStatus(UART_HandleTypeDef);
+bool LOCUS_StartLogger(UART_HandleTypeDef*);
+bool LOCUS_ReadStatus(UART_HandleTypeDef*);
 extern uint8_t hour, minute, seconds, year, month, day;
 extern uint16_t milliseconds;
 extern float latitude, longitude, geoidheight, altitude;

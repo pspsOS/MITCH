@@ -13,35 +13,39 @@ volatile genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 	gGPS.sensor.MT3339 = _gps;
 	gGPS.interface.UART.huart = huart;
 
+
+	return gGPS;
 #ifndef __NO_HAL_UART
 	/** Define Local Variables **/
-	//MT3339_t* gps = &(gGPS.sensor.MT3339);
-	uint8_t temporary; // Buffer to load data received
+//	MT3339_t* gps = &(gGPS.sensor.MT3339);
+	//uint8_t temporary; // Buffer to load data received
 
 
 //	HAL_Delay(10);
-//	//printf("\nthe size is: %d\n",sizeof(trans));
-//	//HAL_UART_Receive(huart, &temporary, 1, HAL_MAX_DELAY);
+//	printf("\nthe size is: %d\n",sizeof(trans));
+//	HAL_UART_Receive(huart, &temporary, 1, HAL_MAX_DELAY);
 //	HAL_Delay(10);
-//
-//	Adafruit_GPS(*huart);
-//
-//	HAL_Delay(10);
-//
-//	sendCommand(*huart, PMTK_SET_BAUD_9600);
-//	HAL_Delay(10);
+
+	Adafruit_GPS(*huart);
+
+	HAL_Delay(10);
+
+	sendCommand(huart, PMTK_SET_BAUD_9600);
+	HAL_Delay(10);
 //	sendCommand(*huart, PMTK_SET_NMEA_OUTPUT_RMCGGA);
-//	HAL_Delay(10);
-//	sendCommand(huart2, PMTK_SET_NMEA_UPDATE_10HZ);
+	sendCommand(huart, PMTK_SET_NMEA_OUTPUT_ALLDATA);
+	HAL_Delay(10);
+	sendCommand(huart, PMTK_SET_NMEA_UPDATE_10HZ);
 //	sendCommand(*huart, PMTK_API_SET_FIX_CTL_5HZ);
-//
-//	HAL_Delay(10);
+
+
+	HAL_Delay(10);
 //	sendCommand(*huart, PGCMD_ANTENNA);
 //	HAL_Delay(10);
-//
+
 //	printf(PMTK_Q_RELEASE);
-//	printf("Connection established at 9600 baud...\n");
-//	HAL_Delay(1);
+	printf("Connection established at 9600 baud...\r\n");
+	HAL_Delay(1);
 #endif
 
 
@@ -62,14 +66,16 @@ uint8_t MT3339_read(volatile genericSensor_t* sensor) {
 }
 
 
-HAL_StatusTypeDef MT3339_receive(volatile genericSensor_t* sensor,uint8_t* buffer) {
+HAL_StatusTypeDef MT3339_receive(volatile genericSensor_t* sensor) {
 #ifndef __NO_HAL_UART
 	//MT3339_t* gps = &(sensor->sensor.MT3339);
+	volatile uint8_t* buffer = (volatile uint8_t*) &((sensor->sensor.MT3339.buffer));
 	UART_HandleTypeDef* huart = sensor->interface.UART.huart;
 	 // Buffer to load data received
+	printf("h");
 	if (huart->Instance == sensor->interface.UART.huart->Instance)  {
-			//printf("hi");
-			HAL_UART_Receive(huart,buffer, 1, HAL_MAX_DELAY);
+			printf("i");
+			HAL_UART_Receive_IT(huart, (uint8_t*) buffer, 1);
 			read(*buffer);
 	}
 #endif

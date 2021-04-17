@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -23,10 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "retarget.h"
 #include "Nucleo_Profiles.h"
-#include "MT3339.h"
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,9 +41,9 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart1_rx;
+UART_HandleTypeDef huart6;
+DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId myTask01Handle;
 uint32_t myTask01Buffer[ 128 ];
@@ -55,7 +52,6 @@ osThreadId myTask02Handle;
 uint32_t myTask02Buffer[ 128 ];
 osStaticThreadDef_t myTask02ControlBlock;
 /* USER CODE BEGIN PV */
-//extern void HAL_UART_RxCpltCallback(UART_HandleTypeDef*);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_USART1_UART_Init(void);
+static void MX_USART6_UART_Init(void);
 void StartDefaultTask(void const * argument);
 void StartTask02(void const * argument);
 
@@ -73,22 +69,6 @@ void StartTask02(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-//TODO: Make UART Callback Generic
-/*
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	printf("Callback\r\n");
-	#ifndef __NO_HAL_UART
-	MT3339_receive(&gps,&temporary);
-	if ( newNMEAreceived() ) {
-		if ( !parse(lastNMEA()) ) {
-			return;
-		}
-		printf("%s\n\r", lastNMEA());
-	}
-	#endif
-}
-*/
 
 /* USER CODE END 0 */
 
@@ -122,22 +102,9 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
-  MX_USART1_UART_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-
   NucleoF4_Init();
- /*
-
-
-
-  HAL_Delay(1000);
-*/
-  //gps.read(&gps);
-  //printf("%s\r\n",statusStr(HAL_UART_Receive(&huart1,gpsStr,50,1000)));
-//  printf("%s\r\n",&(gps.sensor.MT3339.gpsString[0]));
-//  printf("End");
-
-
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -224,39 +191,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
-}
-
-/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -290,6 +224,39 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * @brief USART6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART6_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART6_Init 0 */
+
+  /* USER CODE END USART6_Init 0 */
+
+  /* USER CODE BEGIN USART6_Init 1 */
+
+  /* USER CODE END USART6_Init 1 */
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 9600;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART6_Init 2 */
+
+  /* USER CODE END USART6_Init 2 */
+
+}
+
+/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -299,9 +266,9 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA2_Stream2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+  /* DMA2_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
 
 }
 
@@ -337,8 +304,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void s() { printf("set\r\n"); }
-void r() { printf("rst\r\n"); }
 
 /* USER CODE END 4 */
 
@@ -352,72 +317,20 @@ void r() { printf("rst\r\n"); }
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	extern volatile genericSensor_t btn;
-	_doFToggle(&btn);
-
-	extern volatile LED_t LD2;
+  static TickType_t time_init = 0;
 
 
-	//gps = MT3339_init(&huart1);
-
-	//_setLINV(&LD2);
-	//static uint32_t adc_val[2] = {0};
-
-	static TickType_t time_init = 0;
-
-	 //HAL_ADCEx_InjectedStart(&hadc1);
   /* Infinite loop */
- while(true) {
-	 btn.read(&btn);
-
-	 if(button_OnRising(&btn)) {
-		 LED_SetState(&LD2, !LED_GetState(&LD2));
-		 //HAL_UART_Receive(&huart1,buffer, 100, HAL_MAX_DELAY);
-
-		// printf("%s\r\n",(char*)buffer);
-
-	 }
-//
-	 if(button_OnFalling(&btn)) {
-		 LED_Reset(&LD2);
-	 }
-//
-//	 if(button_OnRToggle(&btn)) {
-//		 //LED_Set(&LD2);
-//	 }
-//
-//	 if(button_OnFToggle(&btn)) {
-//		 //LED_Reset(&LD2);
-//	 }
-//	 adc_val[1] = HAL_ADC_GetValue(&hadc1);
-//	 printf("%d %d",(int) adc_val[0], (int) adc_val[1]);
+  while(1) {
 
 
-
-//	 printf("\r\n");
-	 //HAL_ADC_Stop(&hadc1);
-	 //PRINT_BIN_NL(_getBStatus(&btn));
-	 vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
- }
+	  vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
+  }
   vTaskDelete(NULL);
   /* USER CODE END 5 */
 }
 
 /* USER CODE BEGIN Header_StartTask02 */
-//static uint8_t c[100] = {0};
-//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-//	printf("%s\r\n",(char*)c);
-//	printf("d");
-//}
-uint8_t gar[MAX_NMEA] = {0};
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-	for(int i = 0; i < MAX_NMEA; i++) {
-		if((char)gar[i] == '$') printf("\r\n");
-		if(gar[i]) printf("%c", (char)gar[i]);
-		else break;
-	}
-	printf("%s",(char*)gar);
-}
 /**
 * @brief Function implementing the myTask02 thread.
 * @param argument: Not used
@@ -427,23 +340,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
-	static TickType_t time_init = 0;
-
-	volatile genericSensor_t gps;
-	//gps = MT3339_init(&huart1);
-	uint8_t cmd[MAX_NMEA] = "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28";
-	printf("%s\r\n",statusStr(HAL_UART_Transmit(&huart1,cmd,sizeof(cmd),HAL_MAX_DELAY)));
-	HAL_Delay(5000);
-
   /* Infinite loop */
   while(1) {
-	  HAL_UART_Receive_DMA(&huart1, gar, MAX_NMEA);
-
-	  if(newGps) {
-		 printf("%s",(char*)gar);
-		  newGps = false;
-	  }
-	  vTaskDelayUntil(&time_init, 100/portTICK_RATE_MS);
+    break;
   }
   vTaskDelete(NULL);
   /* USER CODE END StartTask02 */

@@ -22,8 +22,10 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
+MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src \
+MITCH_Common/Software/Acquisition/Acquisition_Src \
+MITCH_Common/System/System_Src \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
 Middlewares/Third_Party/FreeRTOS/Source \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
-Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang \
 

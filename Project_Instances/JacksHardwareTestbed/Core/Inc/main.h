@@ -58,10 +58,17 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define B1_Pin GPIO_PIN_13
+#define B1_GPIO_Port GPIOC
+#define LD2_Pin GPIO_PIN_5
+#define LD2_GPIO_Port GPIOA
+#define B_EXT_Pin GPIO_PIN_15
+#define B_EXT_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /** System Flags **/
 #define DO_RETARGET
+#define NUCLEO_F4
 
 /** Task Rates **/
 // Acquisition Rates Multiplier Settings

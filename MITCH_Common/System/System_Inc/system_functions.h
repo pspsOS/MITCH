@@ -27,6 +27,7 @@
 							printf(EVAL(EXP &1<<i)?"1":"0");\
 							printf("\r\n");})
 
+#define PRINT_HEX(STR,size) ({for(int i = 0;i<size;i++){ if(!STR[i]) break; printf(" %.2x",STR[i]); if(STR[i]=='\r')printf("\r\n");}})
 
 /*
 typedef enum {

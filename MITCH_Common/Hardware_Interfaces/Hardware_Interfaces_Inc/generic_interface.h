@@ -121,6 +121,7 @@ typedef struct MMA1211 {
 
 typedef struct MT3339 {
 	char gpsString[MAX_NMEA];
+	char buffer;
 } MT3339_t;
 
 

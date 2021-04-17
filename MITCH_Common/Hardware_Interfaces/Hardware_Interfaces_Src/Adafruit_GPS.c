@@ -231,12 +231,11 @@ void common_init(void) {
 }
 
 
-void sendCommand(UART_HandleTypeDef huart, char *str) {
-  printf("%s\n\r",str);
+void sendCommand(UART_HandleTypeDef* huart, char *str) {
+//  printf("<< %s\n\r",str);
 	//printf("%d\n\r", (uint16_t) strlen(str));
 #ifndef __NO_HAL_UART
-	HAL_UART_Transmit(&huart, (uint8_t *)str, (uint16_t) sizeof(str),100);
-	HAL_Delay(50);
+	HAL_UART_Transmit_DMA(huart, (uint8_t *)str, (uint16_t) strlen(str));
 #endif
 }
 
@@ -285,13 +284,13 @@ bool waitForSentence(char *wait4me, uint8_t max) {
   return false;
 }
 
-bool LOCUS_StartLogger(UART_HandleTypeDef huart) {
+bool LOCUS_StartLogger(UART_HandleTypeDef* huart) {
   sendCommand(huart, PMTK_LOCUS_STARTLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_LOGSTARTED,MAXWAITSENTENCE);
 }
 
-bool LOCUS_ReadStatus(UART_HandleTypeDef huart) {
+bool LOCUS_ReadStatus(UART_HandleTypeDef* huart) {
   sendCommand(huart, PMTK_LOCUS_QUERY_STATUS);
   
   if (! waitForSentence("$PMTKLOG",MAXWAITSENTENCE))
@@ -338,7 +337,7 @@ bool LOCUS_ReadStatus(UART_HandleTypeDef huart) {
 }
 
 // Standby Mode Switches
-bool standby(UART_HandleTypeDef huart) {
+bool standby(UART_HandleTypeDef* huart) {
   if (inStandbyMode) {
     return false;  // Returns false if already in standby mode, so that you do not wake it up by sending commands to GPS
   }
@@ -350,7 +349,7 @@ bool standby(UART_HandleTypeDef huart) {
   }
 }
 
-bool wakeup(UART_HandleTypeDef huart) {
+bool wakeup(UART_HandleTypeDef* huart) {
   if (inStandbyMode) {
    inStandbyMode = false;
     sendCommand(huart, "");  // send byte to wake it up

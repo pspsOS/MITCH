@@ -69,8 +69,6 @@ void Error_Handler(void);
 //#define NO_BUTTON
 //#define NO_LD2
 
-#define DEFAULT_TAKE_DELAY (50)
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
