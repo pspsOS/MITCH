@@ -46,6 +46,8 @@ void storeBmpData(bmpData_t *dataToStore) {
 	}
 	size += genericVLQ.quantityLength;
 
+	//printf("BMP Time Stamp: %X\n", dataToStore->timeStamp);
+
 	//Compressing Pressure
 	memset(&genericVLQ, 0, sizeof(genericVLQ));
 	genericVLQ = convertToSVLQ(dataToStore->pressure);
@@ -137,6 +139,8 @@ void storeAlaData(alaData_t *dataToStore) {
 		}
 	}
 	size += genericVLQ.quantityLength;
+
+	//printf("ALA Time Stamp: %X\n", dataToStore->timeStamp);
 
 	//Compressing Measured
 	memset(&genericVLQ, 0, sizeof(genericVLQ));

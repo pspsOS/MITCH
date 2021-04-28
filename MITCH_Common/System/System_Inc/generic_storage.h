@@ -44,7 +44,7 @@ typedef struct VLQ {
 
 VLQ_t convertToUVLQ(uint32_t );
 VLQ_t convertToSVLQ(int32_t );
-int8_t writeToStorage(uint8_t *, uint8_t );
 
+int8_t writeToStorage(uint8_t *, uint8_t );
 
 #endif /* SYSTEM_SYSTEM_INC_GENERIC_STORAGE_H_ */

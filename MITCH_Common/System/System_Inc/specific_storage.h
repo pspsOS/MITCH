@@ -9,7 +9,11 @@
 #define SYSTEM_SYSTEM_INC_SPECIFIC_STORAGE_H_
 
 #include "generic_storage.h"
+#include "interface_structs.h"
 
+#include <string.h>
+
+#define RETRY_TAKE_DELAY (0)
 
 /* Function */
 

@@ -22,6 +22,7 @@ typedef enum {
 	UNLOCKED
 } Status_t;
 
+
 typedef struct gpsData {
 	uint32_t timeStamp;
 	char nmeaGGA[MAX_NMEA];

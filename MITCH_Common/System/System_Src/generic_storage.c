@@ -21,12 +21,14 @@ VLQ_t convertToUVLQ(uint32_t originalNum) {
 	int length = 0;
 	do {
 		buffer = (originalNum & 0x7F);
-		if (length != 0) {
-			buffer |= 0x80;
-		}
+
+		buffer |= 0x80;
+
 		newNumArray[length] = buffer;
 		length++;
 	} while ( originalNum >>= 7 );
+
+	newNumArray[0] &= 0x7F;
 
 	VLQ_t newNum = {0};
 	newNum.quantityLength = length;
@@ -60,26 +62,38 @@ VLQ_t convertToUVLQ(uint32_t originalNum) {
  * @author Vishnu Vijay
  * @date 2/7/21
  */
-VLQ_t convertToSVLQ(int32_t originalNum) {
-	uint8_t newNumArray[sizeof(originalNum) + 1] = {0};
+VLQ_t convertToSVLQ(int32_t signedNum) {
+	uint8_t newNumArray[sizeof(signedNum) + 1] = {0};
 	uint8_t buffer = 0;
+	uint32_t originalNum = 0;
 	int length = 0;
 	uint8_t firstByte = 1;
+	if (signedNum < 0) {
+		originalNum = signedNum * -1;
+	}
+	else {
+		originalNum = signedNum;
+	}
+
+
 	do {
 		if (length == 0) {
 			buffer = (originalNum & 0x3F);
-			if (originalNum < 0) {
+			if (signedNum < 0) {
 				buffer |= 0x40;
 			}
 		}
 		else {
 			buffer = (originalNum & 0x7F);
-			buffer |= 0x80;
 			firstByte = 0;
 		}
+		buffer |= 0x80;
 		newNumArray[length] = buffer;
 		length++;
+		printf("len: %d\tfb: %d\tnum: %X\n", length, firstByte, originalNum);
 	} while ( originalNum >>= (7 - firstByte) );
+
+	newNumArray[0] &= 0x7F;
 
 	VLQ_t newNum = {0};
 	newNum.quantityLength = length;
@@ -106,6 +120,7 @@ VLQ_t convertToSVLQ(int32_t originalNum) {
 	return newNum;
 }
 
+
 /**
  * @brief Writes to file
  * Writes the pointer to a file
@@ -113,24 +128,26 @@ VLQ_t convertToSVLQ(int32_t originalNum) {
  * @author Ryan Horvath
  * @date 2/11/21
  */
-int8_t writeToStorage(uint8_t *bytePointer, uint8_t streamSize){
+int8_t writeToStorage(uint8_t *bytePointer, uint8_t streamSize) {
 #ifndef NDEBUG
 	FILE *fp = NULL;
+
 	// Binary
-	fp = fopen("output_binary.txt","a");
+	fp = fopen("output_binary.bin", "a");
 	if (fp == NULL) {
 		return FAILED_FILE_WRITE;
 	}
 	fwrite(bytePointer, sizeof(uint8_t), streamSize, fp);
 	fclose(fp);
 	fp = NULL;
+
 	// Hex
 	fp = fopen("output_hex.txt", "a");
 	if (fp == NULL) {
 		return FAILED_FILE_WRITE;
 	}
 	for (int i = 0; i < streamSize; i++) {
-		fprintf(fp, "%X", bytePointer[i]);
+		fprintf(fp, "%.2X-", bytePointer[i]);
 	}
 	fclose(fp);
 	fp = NULL;
