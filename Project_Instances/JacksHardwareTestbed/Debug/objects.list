@@ -24,6 +24,7 @@
 "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o"
 "MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/Adafruit_GPS.o"
 "MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/ICM20948.o"
+"MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/ICM_20948_C.o"
 "MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/LED.o"
 "MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/MS5607.o"
 "MITCH_Common/Hardware_Interfaces/Hardware_Interfaces_Src/MT3339.o"
