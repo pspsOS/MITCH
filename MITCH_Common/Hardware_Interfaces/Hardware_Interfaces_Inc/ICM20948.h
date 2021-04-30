@@ -36,7 +36,8 @@ void ICM_AccelGyroOff(genericSensor_t* sensor);
 void ICM_AccelGyroOn(genericSensor_t* sensor);
 void ICM_SetGyroRateLPF(uint8_t rate, uint8_t lpf,genericSensor_t* sensor);
 void ICM_SetGyroLPF(uint8_t lpf,genericSensor_t* sensor);
-
+uint8_t ICM_WHOAMI(genericSensor_t* sensor);
 
 volatile genericSensor_t ICM20948_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin);
+uint8_t ICM20948_read(volatile genericSensor_t* sensor);
 #endif /* HARDWARE_INTERFACES_HARDWARE_INTERFACES_INC_ICM20948_H_ */

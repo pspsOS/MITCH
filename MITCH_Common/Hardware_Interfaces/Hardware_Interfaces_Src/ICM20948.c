@@ -7,6 +7,7 @@
 
 #include "generic_interface.h"
 #include "ICM20948.h"
+#include <stdio.h>
 
 genericSensor_t ICM20948_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16_t pin)
 {
@@ -16,13 +17,14 @@ genericSensor_t ICM20948_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16
 
 		gIMU.sensorType = IMU_ICM20948;
 		gIMU.sensor.ICM20948 = _imu;
+		gIMU.read = ICM20948_read;
 	//#ifndef __NO_HAL_SPI
 		gIMU.interface.SPI.bus = bus;
 		gIMU.interface.SPI.port = port;
 		gIMU.interface.SPI.pin = pin;
 		gIMU.interface.SPI.timeout = HAL_MAX_DELAY;
 
-		gIMU.state = HAL_OK;
+		gIMU.state = HAL_ERROR;
 	//#endif
 		gIMU.hasUpdate = true;
 		gIMU.lock = false;
@@ -30,22 +32,40 @@ genericSensor_t ICM20948_init(SPI_HandleTypeDef *bus, GPIO_TypeDef *port, uint16
 
 
 	#ifndef __NO_HAL_SPI
+tryagain:
+		//hello
+gIMU.lock = false;
 
+volatile ICM20948_t* imu;
+		imu= &(gIMU.sensor.ICM20948);
 
-
-		ICM_CSHigh(&gIMU);
-		HAL_Delay(10);
-		ICM_SelectBank(USER_BANK_0,&gIMU);
-		HAL_Delay(10);
-		ICM_Disable_I2C(&gIMU);
-		HAL_Delay(10);
-		ICM_SetClock((uint8_t)CLK_BEST_AVAIL,&gIMU);
-		HAL_Delay(10);
-		ICM_AccelGyroOff(&gIMU);
-		HAL_Delay(20);
-		ICM_AccelGyroOn(&gIMU);
-		HAL_Delay(10);
-		ICM_Initialize(&gIMU);
+		uint8_t whoami = 0xEA;
+		uint8_t test = ICM_WHOAMI(imu);
+		if(test == whoami) {
+			printf("WHO AM I PASSED\n\r");
+			    ICM_CSHigh(imu);
+				HAL_Delay(10);
+				ICM_SelectBank(USER_BANK_0,imu);
+				HAL_Delay(10);
+				ICM_Disable_I2C(imu);
+				HAL_Delay(10);
+				ICM_SetClock((uint8_t)CLK_BEST_AVAIL,imu);
+				HAL_Delay(10);
+				ICM_AccelGyroOff(imu);
+				HAL_Delay(20);
+				ICM_AccelGyroOn(imu);
+				HAL_Delay(10);
+				ICM_Initialize(imu);
+				ICM_CSHigh(imu);
+				gIMU.state = HAL_OK;
+		}
+		else
+		{
+			printf("Who AM I FAILED\r\n");
+			HAL_Delay(1000);
+		}
+		if (gIMU.state==HAL_ERROR)
+			goto tryagain;
 	#endif
 		// Update with all values
 
@@ -238,7 +258,9 @@ void ICM_ReadAccelGyro(genericSensor_t* sensor) {
 	imu->accel_xout = imu->accel_xout / 8;
 	imu->accel_yout = imu->accel_yout / 8;
 	imu->accel_zout = imu->accel_zout / 8;
-
+	printf("X:%d\r\n",imu->accel_xout);
+	printf("Y:%d\r\n",imu->accel_yout);
+	printf("Z:%d\r\n",imu->accel_zout);
 	imu->gyr_xout = imu->gyr_xout / 250;
 	imu->gyr_yout = imu->gyr_yout / 250;
 	imu->gyr_zout = imu->gyr_zout / 250;
@@ -276,3 +298,17 @@ void ICM_AccelGyroOn(genericSensor_t* sensor) {
 void ICM_SetGyroRateLPF(uint8_t rate, uint8_t lpf,genericSensor_t* sensor) {
 	ICM_WriteOneByte(GYRO_CONFIG_1, (rate|lpf),sensor);
 }
+
+uint8_t ICM_WHOAMI(genericSensor_t* sensor) {
+	uint8_t spiData = 0x01;
+	ICM_ReadOneByte(0x00, &spiData,sensor);
+	return spiData;
+}
+
+uint8_t ICM20948_read(volatile genericSensor_t* sensor){
+	ICM_CSLow(sensor);
+	ICM_ReadAccelGyro(sensor);
+	ICM_CSHigh(sensor);
+
+}
+
