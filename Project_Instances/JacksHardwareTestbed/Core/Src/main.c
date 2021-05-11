@@ -205,7 +205,8 @@ int main(void)
 
 	while (1)
   {
-	printf("!%s\r\n",gps.sensor.MT3339.gpsString);
+//	printf("!%s\r\n",gps.sensor.MT3339.gpsString);
+	printf("Outie:%c\r\n",gps.sensor.MT3339.buffer);
 	HAL_Delay(100);
     /* USER CODE END WHILE */
 

@@ -74,8 +74,10 @@ HAL_StatusTypeDef MT3339_receive(genericSensor_t* sensor,uint8_t* buffer, char* 
 
 				if ( parse(lastNMEA()) ) {
 					strncpy(target,lastNMEA(),MAX_NMEA);
+					sensor->sensor.MT3339.buffer = '@';
 //					strncpy(sensor->sensor.MT3339.gpsString,lastNMEA(),MAX_NMEA);
 //					printf("^%s\r\n",sensor->sensor.MT3339.gpsString);
+					printf("Innie:%c\r\n",sensor->sensor.MT3339.buffer);
 				}
 			}
 	//}
