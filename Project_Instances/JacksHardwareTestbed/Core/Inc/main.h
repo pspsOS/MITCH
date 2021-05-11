@@ -64,6 +64,8 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOA
 #define B_EXT_Pin GPIO_PIN_15
 #define B_EXT_GPIO_Port GPIOA
+#define BMP_CS_Pin GPIO_PIN_6
+#define BMP_CS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /** System Flags **/

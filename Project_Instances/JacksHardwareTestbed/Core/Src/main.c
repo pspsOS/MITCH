@@ -28,7 +28,8 @@
 #include "generic_interface.h"
 #include "MT3339.h"
 #include "Nucleo_Profiles.h"
-
+#include "MS5607.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,28 +47,35 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi2;
+
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart6;
+DMA_HandleTypeDef hdma_usart6_rx;
 
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[ 4096 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 /* USER CODE BEGIN PV */
-
-
+volatile genericSensor_t gps;
+int ii = 0;
+HAL_StatusTypeDef state = 69;
 bool doPrint;
 bool doLoop;
 bool doCmd;
 volatile genericSensor_t *_gps;
 char c;
+uint8_t temporary;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART6_UART_Init(void);
+static void MX_SPI2_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -78,22 +86,38 @@ void StartDefaultTask(void const * argument);
 /* USER CODE BEGIN 0 */
 void test();
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	if(doPrint) printf("%c",c);
-	HAL_UART_Receive_IT(&huart6,(uint8_t*) &c,1);
+//	if(doPrint) printf("%c",c);
+//	HAL_UART_Receive_IT(&huart6,(uint8_t*) &c,1);
+
+
+//	printf("Brian");
+//	HAL_Delay(200);
+//	MT3339_receive(&gps,&temporary);
+//	MT3339_read(&gps);
+//	printf("%s",t);
+
+	MT3339_receive(&gps,&temporary,gps.sensor.MT3339.gpsString);
+
+
+	    /* USER CODE END WHILE */
+
+	    /* USER CODE BEGIN 3 */
+//	HAL_Delay(100);
+	state = HAL_UART_Receive_DMA(huart,&temporary, 1);
+//	printf("((%d %d))",state, ii++);
 }
 
-
-void test() {
-
-
-	if(doCmd) {
-		HAL_UART_Transmit_IT(&huart6,(uint8_t*)PMTK_SET_NMEA_OUTPUT_OFF,MAX_NMEA);
-		printf("dddddddddd");
-		doCmd = false;
-	}
-
-	if(doLoop) HAL_UART_Receive_IT(&huart6,(uint8_t*) &c,1);
-}
+//void test() {
+//
+//
+//	if(doCmd) {
+//		HAL_UART_Transmit_IT(&huart6,(uint8_t*)PMTK_SET_NMEA_OUTPUT_OFF,MAX_NMEA);
+//		printf("dddddddddd");
+//		doCmd = false;
+//	}
+//
+//	if(doLoop) HAL_UART_Receive_IT(&huart6,(uint8_t*) &c,1);
+//}
 /* USER CODE END 0 */
 
 /**
@@ -125,20 +149,25 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   NucleoF4_Init();
+  genericSensor_t bmp = MS5607_init(&hspi2,BMP_CS_GPIO_Port,BMP_CS_Pin);
 
-//  HAL_UART_Receive_IT(&huart6,&c,1);
-
+  //HAL_UART_Receive_IT(&huart6,&c,1);
+//  while(1) {
+//	  bmp.read(&bmp);
+//	    printf("%d",bmp.sensor.MS5607.pressure);
+//  }
 //  gps = MT3339_init(&huart6);
 	volatile genericSensor_t gps;
 	gps = MT3339_init(&huart6);
-	_gps = &gps;
-	doLoop = true;
 
-	HAL_UART_Transmit(&huart6,(uint8_t*)  PMTK_SET_BAUD_9600  ,MAX_NMEA,10000);
+
+//	HAL_UART_Transmit(&huart6,(uint8_t*)  PMTK_SET_BAUD_9600  ,MAX_NMEA,10000);
 //	HAL_UART_Transmit(&huart6,(uint8_t*)  PMTK_SET_NMEA_UPDATE_10HZ  ,MAX_NMEA,10000);
 //	HAL_UART_Transmit(&huart6,(uint8_t*)PMTK_SET_NMEA_OUTPUT_ALLDATA,MAX_NMEA,10000);
   /* USER CODE END 2 */
@@ -161,21 +190,23 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 4096, defaultTaskBuffer, &defaultTaskControlBlock);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
-  osKernelStart();
+
 
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+
+	while (1)
   {
+	printf("!%s\r\n",gps.sensor.MT3339.gpsString);
+	HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -220,6 +251,44 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI2_Init(void)
+{
+
+  /* USER CODE BEGIN SPI2_Init 0 */
+
+  /* USER CODE END SPI2_Init 0 */
+
+  /* USER CODE BEGIN SPI2_Init 1 */
+
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI2_Init 2 */
+
+  /* USER CODE END SPI2_Init 2 */
+
 }
 
 /**
@@ -289,6 +358,22 @@ static void MX_USART6_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -304,6 +389,9 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(BMP_CS_GPIO_Port, BMP_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -323,6 +411,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B_EXT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BMP_CS_Pin */
+  GPIO_InitStruct.Pin = BMP_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(BMP_CS_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -350,7 +445,7 @@ void StartDefaultTask(void const * argument)
 	char cmdIn[MAX_NMEA] = {0};
 
 	doLoop = true;
-	test();
+	//test();
 	/* Infinite loop */
 	while(1) {
 		btn.read(&btn);
@@ -376,8 +471,8 @@ void StartDefaultTask(void const * argument)
 		if(button_OnRising(&bext)) {
 			//LED_Set(&LD2);
 			doLoop = !doLoop;
-			if(doLoop) test();
-			printf("%x",huart6.RxState);
+			//if(doLoop) test();
+			//printf("%x",huart6.RxState);
 //			printf("%d\t%d\r\n%d\t%d\r\n", LD2_GPIO_Port, LD2_Pin, LD2.PIN.port, LD2.PIN.pin);
 		}
 		if(button_OnFalling(&bext)) LED_Reset(&LD2);
