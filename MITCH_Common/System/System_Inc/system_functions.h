@@ -12,6 +12,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define __HAL_OK_STR "HAL_OK"
+#define __HAL_ERROR_STR "HAL_ERROR"
+#define __HAL_BUSY_STR "HAL_BUSY"
+#define __HAL_TIMEOUT_STR "HAL_TIMEOUT"
 
 #define EVAL(EXP) (EXP ? 1 : 0)
 #define INV(EXP) (typeof(EXP))(~EXP)
@@ -23,6 +27,7 @@
 							printf(EVAL(EXP &1<<i)?"1":"0");\
 							printf("\r\n");})
 
+#define PRINT_HEX(STR,size) ({for(int i = 0;i<size;i++){ if(!STR[i]) break; printf(" %.2x",STR[i]); if(STR[i]=='\r')printf("\r\n");}})
 
 /*
 typedef enum {
@@ -33,7 +38,7 @@ typedef enum {
 uint32_t getTimeStamp(void);
 void retryTakeDelay(TickType_t length);
 
-void printBin8(uint8_t);
+char* statusStr(HAL_StatusTypeDef status);
 
 //AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts);
 

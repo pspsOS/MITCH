@@ -59,3 +59,6 @@ HAL_StatusTypeDef interfaceUnlock(InterfaceLock_t* lock, genericSensor_t* sensor
 	*lock = false;
 	return sensor->state;
 }
+
+
+

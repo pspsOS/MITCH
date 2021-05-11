@@ -43,6 +43,23 @@ void retryTakeDelay(TickType_t length) {
 }
 
 
+char* statusStr(HAL_StatusTypeDef status) {
+	switch(status) {
+	case HAL_OK:
+		return &__HAL_OK_STR[0];
+		break;
+	case HAL_ERROR:
+		return &__HAL_ERROR_STR[0];
+		break;
+	case HAL_BUSY:
+		return &__HAL_BUSY_STR[0];
+		break;
+	case HAL_TIMEOUT:
+		return &__HAL_TIMEOUT_STR[0];
+		break;
+	}
+	return NULL;
+}
 
 /*
 AccessRequest_t access(bool* deviceLock, bool* structLock, TickType_t delay, uint8_t attempts) {

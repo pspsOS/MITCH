@@ -1,5 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
+# Toolchain: GNU Tools for STM32 (9-2020-q2-update)
 ################################################################################
 
 -include ../makefile.init
@@ -8,7 +9,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
@@ -34,6 +34,12 @@ endif
 endif
 
 -include ../makefile.defs
+
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
 
 BUILD_ARTIFACT_NAME := Jacks Hardware Tesbed
 BUILD_ARTIFACT_EXTENSION := elf
@@ -61,22 +67,22 @@ all: main-build
 main-build: Jacks\ Hardware\ Tesbed.elf secondary-outputs
 
 # Tool invocations
-Jacks\ Hardware\ Tesbed.elf: $(OBJS) $(USER_OBJS) /Users/jackwiley/Documents/GitHub/MITCH/Project_Instances/JacksHardwareTestbed/STM32F411RETX_FLASH.ld
-	arm-none-eabi-gcc -o "Jacks Hardware Tesbed.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/jackwiley/Documents/GitHub/MITCH/Project_Instances/JacksHardwareTestbed/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Jacks Hardware Tesbed.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Jacks\ Hardware\ Tesbed.elf: $(OBJS) $(USER_OBJS) C:\Users\Mark\ Paral\Documents\GitHub\MITCH\Project_Instances\JacksHardwareTestbed\STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Jacks Hardware Tesbed.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Mark Paral\Documents\GitHub\MITCH\Project_Instances\JacksHardwareTestbed\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Jacks Hardware Tesbed.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-default.size.stdout: $(EXECUTABLES)
+default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-size  $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Jacks\ Hardware\ Tesbed.list: $(EXECUTABLES)
+Jacks\ Hardware\ Tesbed.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Jacks Hardware Tesbed.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Jacks\ Hardware\ Tesbed.bin: $(EXECUTABLES)
+Jacks\ Hardware\ Tesbed.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Jacks Hardware Tesbed.bin"
 	@echo 'Finished building: $@'
 	@echo ' '

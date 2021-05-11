@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -58,7 +58,8 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef hdma_adc1;
+extern DMA_HandleTypeDef hdma_usart6_tx;
+extern UART_HandleTypeDef huart6;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -184,17 +185,31 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles DMA2 stream0 global interrupt.
+  * @brief This function handles DMA2 stream6 global interrupt.
   */
-void DMA2_Stream0_IRQHandler(void)
+void DMA2_Stream6_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
 
-  /* USER CODE END DMA2_Stream0_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
+  /* USER CODE END DMA2_Stream6_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart6_tx);
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
 
-  /* USER CODE END DMA2_Stream0_IRQn 1 */
+  /* USER CODE END DMA2_Stream6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART6 global interrupt.
+  */
+void USART6_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART6_IRQn 0 */
+
+  /* USER CODE END USART6_IRQn 0 */
+  HAL_UART_IRQHandler(&huart6);
+  /* USER CODE BEGIN USART6_IRQn 1 */
+
+  /* USER CODE END USART6_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
