@@ -30,7 +30,8 @@ genericSensor_t MT3339_init(UART_HandleTypeDef *huart) {
 
 	sendCommand(huart, PMTK_SET_BAUD_9600);
 	HAL_Delay(10);
-	sendCommand(huart, PMTK_SET_NMEA_OUTPUT_RMCGGA);
+//	sendCommand(huart, PMTK_SET_NMEA_OUTPUT_RMCGGA);
+	sendCommand(huart, PMTK_SET_NMEA_OUTPUT_ALLDATA);
 	HAL_Delay(10);
 	//sendCommand(huart2, PMTK_SET_NMEA_UPDATE_10HZ);
 	sendCommand(huart, PMTK_API_SET_FIX_CTL_5HZ);
@@ -64,8 +65,7 @@ uint8_t MT3339_read(genericSensor_t* sensor) {
 
 HAL_StatusTypeDef MT3339_receive(genericSensor_t* sensor,uint8_t* buffer, char* target) {
 #ifndef __NO_HAL_UART
-	MT3339_t* gps = &(sensor->sensor.MT3339);
-	UART_HandleTypeDef* huart = sensor->interface.UART.huart;
+
 	 // Buffer to load data received
 	//if (huart->Instance == sensor->interface.UART.huart->Instance)  {
 //			printf("hi");
@@ -75,9 +75,9 @@ HAL_StatusTypeDef MT3339_receive(genericSensor_t* sensor,uint8_t* buffer, char* 
 				if ( parse(lastNMEA()) ) {
 					strncpy(target,lastNMEA(),MAX_NMEA);
 					sensor->sensor.MT3339.buffer = '@';
-//					strncpy(sensor->sensor.MT3339.gpsString,lastNMEA(),MAX_NMEA);
+					strncpy(sensor->sensor.MT3339.gpsString,lastNMEA(),MAX_NMEA);
 //					printf("^%s\r\n",sensor->sensor.MT3339.gpsString);
-					printf("Innie:%c\r\n",sensor->sensor.MT3339.buffer);
+//					printf("\t\tInnie:%c\r\n",sensor->sensor.MT3339.buffer);
 				}
 			}
 	//}

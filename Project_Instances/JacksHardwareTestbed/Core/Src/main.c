@@ -87,23 +87,17 @@ void StartDefaultTask(void const * argument);
 void test();
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 //	if(doPrint) printf("%c",c);
+//	printf("Before:%c\r\n",gps.sensor.MT3339.gpsString);
 //	HAL_UART_Receive_IT(&huart6,(uint8_t*) &c,1);
-
-
 //	printf("Brian");
 //	HAL_Delay(200);
 //	MT3339_receive(&gps,&temporary);
 //	MT3339_read(&gps);
 //	printf("%s",t);
-
 	MT3339_receive(&gps,&temporary,gps.sensor.MT3339.gpsString);
-
-
-	    /* USER CODE END WHILE */
-
-	    /* USER CODE BEGIN 3 */
-//	HAL_Delay(100);
+//	printf("In Between%s\r\n",gps.sensor.MT3339.gpsString);
 	state = HAL_UART_Receive_DMA(huart,&temporary, 1);
+//	printf("After%s\r\n",gps.sensor.MT3339.gpsString);
 //	printf("((%d %d))",state, ii++);
 }
 
@@ -163,7 +157,7 @@ int main(void)
 //	    printf("%d",bmp.sensor.MS5607.pressure);
 //  }
 //  gps = MT3339_init(&huart6);
-	volatile genericSensor_t gps;
+
 	gps = MT3339_init(&huart6);
 
 
@@ -205,9 +199,9 @@ int main(void)
 
 	while (1)
   {
-//	printf("!%s\r\n",gps.sensor.MT3339.gpsString);
-	printf("Outie:%c\r\n",gps.sensor.MT3339.buffer);
-	HAL_Delay(100);
+	printf("%s\r\n",gps.sensor.MT3339.gpsString);
+//	printf("Outie:%c\r\n",gps.sensor.MT3339.buffer);
+	HAL_Delay(300);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
